@@ -13,7 +13,7 @@
 .jobTable tr > *:nth-child(3) { width:16%; }
 /* .jobTable tr > *:nth-child(6) { width:5%; }
 .jobTable tr > *:nth-child(7) { width:5%; } */
-.jobTable tr > *:nth-child(8) { width:22%; }
+.jobTable tr > *:nth-child(8) { width:18%; }
 
 .classIp {
   text-overflow: ellipsis;
