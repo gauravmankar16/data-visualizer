@@ -1,0 +1,7 @@
+.login.card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.loginPage {
+  background-image: url(../../../../assets/loginBg1.jpg);
+  background-size: cover;
+}

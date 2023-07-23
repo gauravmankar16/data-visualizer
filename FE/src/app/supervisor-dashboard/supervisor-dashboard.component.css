@@ -1,0 +1,23 @@
+.table{
+  width: 100%;
+}
+.table > :not(caption) > * > * {
+  padding: 5px !important;
+}
+.mat-header-cell {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.jobTable tr > *:nth-child(2) { width:16%; }
+.jobTable tr > *:nth-child(3) { width:16%; }
+/* .jobTable tr > *:nth-child(6) { width:5%; }
+.jobTable tr > *:nth-child(7) { width:5%; } */
+.jobTable tr > *:nth-child(8) { width:22%; }
+
+.classIp {
+  text-overflow: ellipsis;
+}
+.timeIp {
+  width: 85%;
+}
