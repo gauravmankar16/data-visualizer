@@ -1,19 +1,19 @@
-node_modules/
-*.log
+BE/node_modules/
+BE/*.log
 
-npm-debug.log
-yarn-error.log
+BE/npm-debug.log
+BE/yarn-error.log
 
 # Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
+FE/dist
+FE/tmp
+FE/out-tsc
+FE/bazel-out
 
 # Node
-/node_modules
-npm-debug.log
-yarn-error.log
+FE/node_modules
+FE/npm-debug.log
+FE/yarn-error.log
 
 # IDEs and editors
 .idea/
@@ -33,14 +33,14 @@ yarn-error.log
 .history/*
 
 # Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
+FE/.angular/cache
+FE/.sass-cache/
+FE/connect.lock
+FE/coverage
+FE/libpeerconnection.log
+FE/testem.log
+FE/typings
 
 # System files
-.DS_Store
-Thumbs.db
+FE/.DS_Store
+FE/Thumbs.db

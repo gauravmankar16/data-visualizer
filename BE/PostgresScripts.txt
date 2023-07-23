@@ -1,0 +1,76 @@
+-- Table: public.job_details
+
+-- DROP TABLE IF EXISTS public.job_details;
+
+CREATE TABLE IF NOT EXISTS public.job_details
+(
+    id integer NOT NULL DEFAULT nextval('job_details_id_seq'::regclass),
+    machine text COLLATE pg_catalog."default" NOT NULL,
+    job_name text COLLATE pg_catalog."default" NOT NULL,
+    operator_name text COLLATE pg_catalog."default" NOT NULL,
+    shift tsrange NOT NULL,
+    target_qty integer NOT NULL,
+    actual_qty integer NOT NULL,
+    remarks text COLLATE pg_catalog."default",
+    updatedby text COLLATE pg_catalog."default",
+    CONSTRAINT job_details_pkey PRIMARY KEY (id),
+    CONSTRAINT job_details_device_shift_excl EXCLUDE USING gist (
+        machine WITH =,
+        shift WITH &&)
+
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.job_details
+    OWNER to postgres;
+	
+-- Table: public.sensor
+
+-- DROP TABLE IF EXISTS public.sensor;
+
+CREATE TABLE IF NOT EXISTS public.sensor
+(
+    device text COLLATE pg_catalog."default" NOT NULL,
+    eventtime timestamp without time zone NOT NULL
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.sensor
+    OWNER to postgres;
+	
+	
+-- Table: public.users
+
+-- DROP TABLE IF EXISTS public.users;
+
+CREATE TABLE IF NOT EXISTS public.users
+(
+    id integer NOT NULL,
+    username character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    password character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    created_on timestamp without time zone NOT NULL,
+    CONSTRAINT users_email_key UNIQUE (email),
+    CONSTRAINT users_username_key UNIQUE (username)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.users
+    OWNER to postgres;
+	
+___________________________________________________
+POSTGRES ->
+	
+docker pull timescale/timescaledb-ha:pg14-latest
+
+
+docker run -d --name timescaledb -p 5436:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb-ha:pg14-latest
+
+
+docker exec -it timescaledb psql -U postgres
+
+
+psql -U postgres -h localhost
