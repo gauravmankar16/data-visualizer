@@ -8,7 +8,7 @@ RUN cd FE && npm install @angular/cli && npm install && npm run build
 FROM node:14.17.6 AS server-build
 WORKDIR /app/BE
 COPY --from=ui-build /usr/src/app/FE/dist/data-metrics ./FE/dist
-COPY package*.json ./
+COPY BE/package*.json ./
 RUN npm install
 COPY BE ./
 
