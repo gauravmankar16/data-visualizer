@@ -10,7 +10,9 @@ CREATE TABLE IF NOT EXISTS job_details
     target_qty integer NOT NULL,
     actual_qty integer NOT NULL,
     remarks text,
-    updatedby text,
+    updated_by text,
+    start_time timestamp NOT NULL,
+    end_time timestamp NOT NULL,
     CONSTRAINT job_details_pkey PRIMARY KEY (id),
     CONSTRAINT job_details_machine_shift_excl EXCLUDE USING gist (
         machine WITH =,

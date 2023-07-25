@@ -1,0 +1,107 @@
+<div class="job-container mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+    <!-- MACHINE Column -->
+    <ng-container matColumnDef="machine">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Machine </th>
+      <td mat-cell *matCellDef="let element"> {{element.machine}} </td>
+    </ng-container>
+    <!-- JOB NAME Column -->
+    <ng-container matColumnDef="jobName">
+      <th mat-header-cell *matHeaderCellDef>
+        <div class="header-container">
+          <div mat-sort-header>Job Name</div>
+          <div>
+            <mat-form-field>
+              <mat-label>Search</mat-label>
+              <input matInput [formControl]="jobNameFilter">
+            </mat-form-field>
+          </div>
+        </div>
+      </th>
+      <td mat-cell *matCellDef="let element"> {{element.job_name}} </td>
+    </ng-container>
+    <!-- OPERATOR NAME Column -->
+    <ng-container matColumnDef="operatorName">
+      <th mat-header-cell *matHeaderCellDef>
+        <div class="header-container">
+          <div  mat-sort-header>Operator Name</div>
+          <div>
+            <mat-form-field>
+              <mat-label>Search</mat-label>
+              <input matInput [formControl]="operatorNameFilter">
+            </mat-form-field>
+          </div>
+        </div>
+      </th>
+      <td mat-cell *matCellDef="let element"> {{element.operator_name}} </td>
+    </ng-container>
+    <!-- TARGET QTY Column -->
+    <ng-container matColumnDef="targetQty">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Target Qty </th>
+      <td mat-cell *matCellDef="let element"> {{element.target_qty}} </td>
+    </ng-container>
+    <!-- ACTUAL QTY Column -->
+    <ng-container matColumnDef="actualQty">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Actual Qty </th>
+      <td mat-cell *matCellDef="let element"> {{element.actual_qty}} </td>
+    </ng-container>
+    <!-- START TIME Column -->
+    <ng-container matColumnDef="startTime">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Time </th>
+      <td mat-cell *matCellDef="let element"> {{element.start_time}} </td>
+    </ng-container>
+    <!-- START TIME Column -->
+    <ng-container matColumnDef="endTime">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> End Time </th>
+      <td mat-cell *matCellDef="let element"> {{element.end_time}} </td>
+    </ng-container>
+    <!-- REMARKS Column -->
+    <ng-container matColumnDef="remarks">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Remarks </th>
+      <td mat-cell *matCellDef="let element"> {{element.remarks}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" sticky></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+        No data matching the filter.
+      </td>
+    </tr>
+  </table>
+  <mat-paginator showFirstLastButtons [length]="totalCount" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 50]"
+   (page)="onPageChange($event)">
+  </mat-paginator>
+
+  <div class="container">
+    <form [formGroup]="jobForm">
+      <label>Machine:</label>
+      <input formControlName="machine" type="text" />
+
+      <label>Job Name:</label>
+      <input formControlName="job_name" type="text" />
+
+      <label>Operator Name:</label>
+      <input formControlName="operator_name" type="text" />
+
+      <label>Target Qty:</label>
+      <input formControlName="target_qty" type="number" />
+
+      <label>Actual Qty:</label>
+      <input formControlName="actual_qty" type="number" />
+
+      <label>Start Time:</label>
+      <input formControlName="start_time" type="datetime-local" />
+
+      <label>End Time:</label>
+      <input formControlName="end_time" type="datetime-local" />
+
+      <label>Remarks:</label>
+      <input formControlName="remarks" type="text" />
+
+      <button type="button" (click)="onFormSubmit()">Submit</button>
+    </form>
+  </div>
+</div>
+
+

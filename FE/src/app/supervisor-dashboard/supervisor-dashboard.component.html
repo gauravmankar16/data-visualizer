@@ -2,13 +2,13 @@
   <form [formGroup]="jobForm">
     <table class="table jobTable">
       <thead>
-        <th class="machine">Machine</th>
-        <th class="jobName">Job Name</th>
-        <th class="opName">Operator Name</th>
-        <th class="targetQty">Target Qty</th>
+        <th class="machine">Machine*</th>
+        <th class="jobName">Job Name*</th>
+        <th class="opName">Operator Name*</th>
+        <th class="targetQty">Target Qty*</th>
         <th class="actualQty">Actual Qty</th>
-        <th class="startTime">Start Time</th>
-        <th class="endTime">End Time</th>
+        <th class="startTime">Start Time*</th>
+        <th class="endTime">End Time*</th>
         <th class="remarks">Remarks</th>
       </thead>
       <tbody formArrayName="jobs" *ngFor="let group of getFormData.controls; let i=index">

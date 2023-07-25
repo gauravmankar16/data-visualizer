@@ -10,6 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 
 import { CommonModule } from '@angular/common';
 import { AppComponent } from './app.component';
@@ -26,6 +27,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { LoaderService } from './services/loader.service';
 import { LoaderInterceptor } from './interceptors/loader-interceptor.service';
+import { SupervisorBoardComponent } from './supervisor-board/supervisor-board.component';
+import { MatSortModule } from '@angular/material/sort';
+
 
 @NgModule({
   declarations: [
@@ -34,7 +38,8 @@ import { LoaderInterceptor } from './interceptors/loader-interceptor.service';
     HeaderComponent,
     HomeComponent,
     ProfileComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    SupervisorBoardComponent
   ],
   imports: [
     BrowserModule,
@@ -52,7 +57,9 @@ import { LoaderInterceptor } from './interceptors/loader-interceptor.service';
     RouterModule,
     AuthModule,
     MatSelectModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
+    MatSortModule
   ],
   providers: [
     LoaderService,
