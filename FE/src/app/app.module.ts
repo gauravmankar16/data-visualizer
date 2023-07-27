@@ -10,7 +10,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { CommonModule } from '@angular/common';
 import { AppComponent } from './app.component';
@@ -29,6 +31,8 @@ import { LoaderService } from './services/loader.service';
 import { LoaderInterceptor } from './interceptors/loader-interceptor.service';
 import { SupervisorBoardComponent } from './supervisor-board/supervisor-board.component';
 import { MatSortModule } from '@angular/material/sort';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 
 
 @NgModule({
@@ -39,7 +43,8 @@ import { MatSortModule } from '@angular/material/sort';
     HomeComponent,
     ProfileComponent,
     SpinnerComponent,
-    SupervisorBoardComponent
+    SupervisorBoardComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +64,10 @@ import { MatSortModule } from '@angular/material/sort';
     MatSelectModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatSnackBarModule
   ],
   providers: [
     LoaderService,

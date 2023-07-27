@@ -26,9 +26,10 @@ router.post("/save", auth.verifyToken, async function (req, res, next) {
   try {
     // console.log(req.body);
     let elm = req.body;
-    let query = `INSERT INTO job_details
-    VALUES(${elm.id}, '${elm.machine}', '${elm.job_name}', '${elm.operator_name}', '[${elm.start_time},${elm.end_time})', ${elm.target_qty}, ${elm.actual_qty}, '${elm.remarks}', '${elm.updated_by}', '${elm.start_time}', '${elm.end_time}')
-    ON CONFLICT(id) DO UPDATE SET machine = EXCLUDED.machine, job_name = EXCLUDED.job_name, operator_name = EXCLUDED.operator_name, shift = EXCLUDED.shift, target_qty = EXCLUDED.target_qty, actual_qty = EXCLUDED.actual_qty, remarks = EXCLUDED.remarks, updated_by = EXCLUDED.updated_by, start_time = EXCLUDED.start_time, end_time = EXCLUDED.end_time`;
+    // elm.start_time = new Date(elm.start_time).toISOString();
+    // elm.end_time = new Date(elm.end_time).toISOString();
+    let query = `INSERT INTO job_details (machine, job_name, operator_name, shift, target_qty, actual_qty, remarks, updated_by, start_time, end_time)
+    VALUES('${elm.machine}', '${elm.job_name}', '${elm.operator_name}', '[${elm.start_time},${elm.end_time})', ${elm.target_qty}, ${elm.actual_qty}, '${elm.remarks}', '${elm.updated_by}', '${elm.start_time}', '${elm.end_time}')`;
     let res = await pool.query(query);
 
     // let jobs = req.body.jobs;
@@ -40,6 +41,23 @@ router.post("/save", auth.verifyToken, async function (req, res, next) {
     //   ON CONFLICT(id) DO UPDATE SET machine = EXCLUDED.machine, job_name = EXCLUDED.job_name, operator_name = EXCLUDED.operator_name, shift = EXCLUDED.shift, target_qty = EXCLUDED.target_qty, actual_qty = EXCLUDED.actual_qty, remarks = EXCLUDED.remarks, updated_by = EXCLUDED.updated_by, start_time = EXCLUDED.start_time, end_time = EXCLUDED.end_time`;
     //   let res = await pool.query(query);
     // }
+    res.send({ statusCode: 201 });
+  } catch (error) {
+    res.send({ statusCode: 500, error: error });
+  }
+});
+
+router.post("/update", auth.verifyToken, async function (req, res, next) {
+  try {
+    // console.log(req.body);
+    let elm = req.body;
+    if (elm.id) {
+      let updateQuery = `UPDATE job_details
+      SET machine = '${elm.machine}', job_name = '${elm.job_name}', operator_name = '${elm.operator_name}', shift = '[${elm.start_time},${elm.end_time})', 
+      target_qty = ${elm.target_qty}, actual_qty = ${elm.actual_qty}, remarks = '${elm.remarks}', updated_by = '${elm.updated_by}', start_time = '${elm.start_time}', end_time = '${elm.end_time}'
+      WHERE id = ${elm.id};`;
+      await pool.query(updateQuery);
+    }
     res.send({ statusCode: 200 });
   } catch (error) {
     res.send({ statusCode: 500, error: error });

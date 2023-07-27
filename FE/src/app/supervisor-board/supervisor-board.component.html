@@ -1,107 +1,329 @@
-<div class="job-container mat-elevation-z8">
-  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
-    <!-- MACHINE Column -->
-    <ng-container matColumnDef="machine">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Machine </th>
-      <td mat-cell *matCellDef="let element"> {{element.machine}} </td>
-    </ng-container>
-    <!-- JOB NAME Column -->
-    <ng-container matColumnDef="jobName">
-      <th mat-header-cell *matHeaderCellDef>
-        <div class="header-container">
-          <div mat-sort-header>Job Name</div>
-          <div>
-            <mat-form-field>
-              <mat-label>Search</mat-label>
-              <input matInput [formControl]="jobNameFilter">
-            </mat-form-field>
-          </div>
-        </div>
-      </th>
-      <td mat-cell *matCellDef="let element"> {{element.job_name}} </td>
-    </ng-container>
-    <!-- OPERATOR NAME Column -->
-    <ng-container matColumnDef="operatorName">
-      <th mat-header-cell *matHeaderCellDef>
-        <div class="header-container">
-          <div  mat-sort-header>Operator Name</div>
-          <div>
-            <mat-form-field>
-              <mat-label>Search</mat-label>
-              <input matInput [formControl]="operatorNameFilter">
-            </mat-form-field>
-          </div>
-        </div>
-      </th>
-      <td mat-cell *matCellDef="let element"> {{element.operator_name}} </td>
-    </ng-container>
-    <!-- TARGET QTY Column -->
-    <ng-container matColumnDef="targetQty">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Target Qty </th>
-      <td mat-cell *matCellDef="let element"> {{element.target_qty}} </td>
-    </ng-container>
-    <!-- ACTUAL QTY Column -->
-    <ng-container matColumnDef="actualQty">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Actual Qty </th>
-      <td mat-cell *matCellDef="let element"> {{element.actual_qty}} </td>
-    </ng-container>
-    <!-- START TIME Column -->
-    <ng-container matColumnDef="startTime">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Time </th>
-      <td mat-cell *matCellDef="let element"> {{element.start_time}} </td>
-    </ng-container>
-    <!-- START TIME Column -->
-    <ng-container matColumnDef="endTime">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> End Time </th>
-      <td mat-cell *matCellDef="let element"> {{element.end_time}} </td>
-    </ng-container>
-    <!-- REMARKS Column -->
-    <ng-container matColumnDef="remarks">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Remarks </th>
-      <td mat-cell *matCellDef="let element"> {{element.remarks}} </td>
-    </ng-container>
+<div>
+  <!-- <form [formGroup]="jobForm" class="single-line-form">
+    <div class="form-input short-input">
+      <label for="machine">Machine:</label>
+      <div class="input-container">
+        <mat-select class="form-control" placeholder="machine" formControlName="machine">
+          <mat-option *ngFor="let category of machines" [value]="category.name">
+            {{category.name}}
+          </mat-option>
+        </mat-select>
+        <span class="text-danger" *ngIf="jobForm.get('machine')?.invalid && jobForm.get('machine')?.touched && jobForm.get('machine')?.hasError('required')" class="error-message">
+          {{ machineRequired }}
+        </span>
+      </div>
+    </div>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns" sticky></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"></tr>
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-        No data matching the filter.
-      </td>
-    </tr>
-  </table>
-  <mat-paginator showFirstLastButtons [length]="totalCount" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 50]"
-   (page)="onPageChange($event)">
-  </mat-paginator>
+    <div class="form-input">
+      <label for="job_name">Job Name:</label>
+      <div class="input-container">
+        <input type="text" formControlName="job_name" class="form-control" placeholder="jobName">
+        <div *ngIf="jobForm.get('job_name')?.invalid && jobForm.get('job_name')?.touched" class="error-message">
+          {{ jobNameRequired }}
+        </div>
+      </div>
+    </div>
 
-  <div class="container">
+    <div class="form-input">
+      <label for="operator_name">Operator Name:</label>
+      <div class="input-container">
+        <input type="text" formControlName="operator_name" class="form-control" placeholder="operatorName">
+        <div *ngIf="jobForm.get('operator_name')?.invalid && jobForm.get('operator_name')?.touched" class="error-message">
+          {{ operatorNameRequired }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-input short-input">
+      <label for="target_qty">Target Qty:</label>
+      <div class="input-container">
+        <input type="number" formControlName="target_qty" class="form-control" placeholder="targetQty">
+        <div *ngIf="jobForm.get('target_qty')?.invalid && jobForm.get('target_qty')?.touched" class="error-message">
+          {{ targetQtyRequired }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-input short-input">
+      <label for="actual_qty">Actual Qty:</label>
+      <div class="input-container">
+        <input type="number" formControlName="actual_qty" class="form-control" placeholder="actualQty">
+        <div *ngIf="jobForm.get('actual_qty')?.invalid && jobForm.get('actual_qty')?.touched" class="error-message">
+          {{ actualyQtyRequired }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-input">
+      <label for="start_time">Start Time:</label>
+      <div class="input-container">
+        <input type="datetime-local" formControlName="start_time" class="form-control" min="2023-07-27 23:59" placeholder="startTime" (change)="onStartTimeChange()">
+        <div *ngIf="jobForm.get('start_time')?.invalid && jobForm.get('start_time')?.touched && jobForm.get('start_time')?.hasError('required')" class="error-message">
+          {{ startTimeRequired }}
+        </div>
+        <div class="warning-message" *ngIf="startTimePassedFlag">
+          {{ startTimePassed }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-input">
+      <label for="end_time">End Time:</label>
+      <div class="input-container">
+        <input type="datetime-local" formControlName="end_time" class="form-control" min="{{today}}" placeholder="endTime" (change)="onEndTimeChange()">
+        <div *ngIf="jobForm.get('end_time')?.invalid && jobForm.get('end_time')?.touched && jobForm.get('end_time')?.hasError('required')" class="error-message">
+          {{ endTimeRequired }}
+        </div>
+        <div *ngIf="jobForm.hasError('endTimeBeforeStartTime', ['end_time'])" class="error-message">
+          {{ endTimeError }}
+        </div>
+        <div class="warning-message" *ngIf="endTimePassedFlag">
+          {{ endTimePassed }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-input remarks">
+      <label for="remarks">Remarks:</label>
+      <div class="input-container">
+        <input type="text" formControlName="remarks" class="form-control" title="{{jobForm.get('remarks')?.value}}" placeholder="remarks">
+      </div>
+    </div>
+  </form> -->
+
+
+  <!-- New UI starts hete -->
+  <!-- <mat-card class="add-job-card">
+    <mat-card-title>
+      Add Job Details:
+    </mat-card-title>
+    <mat-card-content>
+      <form [formGroup]="jobForm">
+        <mat-form-field class="short-input" appearance="outline">
+          <mat-label>Machine:</mat-label>
+          <mat-select placeholder="Machine" formControlName="machine">
+            <mat-option *ngFor="let category of machines" [value]="category.name">{{category.name}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="jobForm.get('machine')?.invalid && jobForm.get('machine')?.touched && jobForm.get('machine')?.hasError('required')">{{machineRequired}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="long-input" appearance="outline">
+          <mat-label>Job Name:</mat-label>
+          <input matInput type="text" formControlName="job_name" class="form-control" placeholder="Job Name" required>
+          <mat-error *ngIf="jobForm.get('job_name')?.invalid && jobForm.get('job_name')?.touched">{{jobNameRequired}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="long-input" appearance="outline">
+          <mat-label>Operator Name:</mat-label>
+          <input matInput type="text" formControlName="operator_name" class="form-control" placeholder="Operator Name" required>
+          <mat-error *ngIf="jobForm.get('operator_name')?.invalid && jobForm.get('operator_name')?.touched">{{operatorNameRequired}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="short-input" appearance="outline">
+          <mat-label>Target Qty:</mat-label>
+          <input matInput type="number" formControlName="target_qty" class="form-control" placeholder="Target Qty" required>
+          <mat-error *ngIf="jobForm.get('target_qty')?.invalid && jobForm.get('target_qty')?.touched">{{targetQtyRequired}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="short-input" appearance="outline">
+          <mat-label>Actual Qty:</mat-label>
+          <input matInput type="number" formControlName="actual_qty" class="form-control" placeholder="Actual Qty" required>
+          <mat-error *ngIf="jobForm.get('actual_qty')?.invalid && jobForm.get('actual_qty')?.touched">{{actualyQtyRequired}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="medium-input" appearance="outline">
+          <mat-label>Start Time:</mat-label>
+          <input matInput type="datetime-local" formControlName="start_time" class="form-control" min="{{today}}" placeholder="Start Time" (change)="onStartTimeChange()" required>
+          <mat-error *ngIf="jobForm.get('start_time')?.invalid && jobForm.get('start_time')?.touched && jobForm.get('start_time')?.hasError('required')">{{startTimeRequired}}</mat-error>
+          <mat-error *ngIf="startTimePassedFlag">{{startTimePassed}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="medium-input" appearance="outline">
+          <mat-label>End Time:</mat-label>
+          <input matInput type="datetime-local" formControlName="end_time" class="form-control" min="{{today}}" placeholder="End Time" (change)="onEndTimeChange()" required>
+          <mat-error *ngIf="jobForm.get('end_time')?.invalid && jobForm.get('end_time')?.touched && jobForm.get('end_time')?.hasError('required')">{{endTimeRequired}}</mat-error>
+          <mat-error *ngIf="jobForm.hasError('endTimeBeforeStartTime', ['end_time'])">{{endTimeError}}</mat-error>
+          <mat-error *ngIf="endTimePassedFlag">{{endTimePassed}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="extra-long-input" appearance="outline">
+          <mat-label>Remarks:</mat-label>
+          <input matInput type="text" formControlName="remarks" class="form-control remark" title="{{jobForm.get('remarks')?.value}}" placeholder="Remarks">
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-stroked-button (click)="onFormReset()">
+        <mat-icon>clear_all</mat-icon>
+        Reset
+      </button>
+      <button mat-stroked-button (click)="onFormSubmit()" [disabled]="jobForm.invalid">
+        <mat-icon>save</mat-icon>
+        Save
+      </button>
+    </mat-card-actions>
+  </mat-card> -->
+
+
+
+  <!-- new new new ui -->
+  <section class="add-job-section">
+    <h5>Add Job Details:</h5>
     <form [formGroup]="jobForm">
-      <label>Machine:</label>
-      <input formControlName="machine" type="text" />
+      <mat-form-field class="short-input" appearance="outline">
+        <mat-label>Machine:</mat-label>
+        <mat-select placeholder="Machine" formControlName="machine">
+          <mat-option *ngFor="let category of machines" [value]="category.name">{{category.name}}</mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="jobForm.get('machine')?.invalid && jobForm.get('machine')?.touched && jobForm.get('machine')?.hasError('required')">{{machineRequired}}</mat-error>
+      </mat-form-field>
 
-      <label>Job Name:</label>
-      <input formControlName="job_name" type="text" />
+      <mat-form-field class="long-input" appearance="outline">
+        <mat-label>Job Name:</mat-label>
+        <input matInput type="text" formControlName="job_name" class="form-control" placeholder="Job Name" required>
+        <mat-error
+          *ngIf="jobForm.get('job_name')?.invalid && jobForm.get('job_name')?.touched">{{jobNameRequired}}</mat-error>
+      </mat-form-field>
 
-      <label>Operator Name:</label>
-      <input formControlName="operator_name" type="text" />
+      <mat-form-field class="long-input" appearance="outline">
+        <mat-label>Operator Name:</mat-label>
+        <input matInput type="text" formControlName="operator_name" class="form-control" placeholder="Operator Name"
+          required>
+        <mat-error
+          *ngIf="jobForm.get('operator_name')?.invalid && jobForm.get('operator_name')?.touched">{{operatorNameRequired}}</mat-error>
+      </mat-form-field>
 
-      <label>Target Qty:</label>
-      <input formControlName="target_qty" type="number" />
+      <mat-form-field class="short-input" appearance="outline">
+        <mat-label>Target Qty:</mat-label>
+        <input matInput type="number" formControlName="target_qty" class="form-control" placeholder="Target Qty"
+          required>
+        <mat-error
+          *ngIf="jobForm.get('target_qty')?.invalid && jobForm.get('target_qty')?.touched">{{targetQtyRequired}}</mat-error>
+      </mat-form-field>
 
-      <label>Actual Qty:</label>
-      <input formControlName="actual_qty" type="number" />
+      <mat-form-field class="short-input" appearance="outline">
+        <mat-label>Actual Qty:</mat-label>
+        <input matInput type="number" formControlName="actual_qty" class="form-control" placeholder="Actual Qty"
+          required>
+        <mat-error
+          *ngIf="jobForm.get('actual_qty')?.invalid && jobForm.get('actual_qty')?.touched">{{actualyQtyRequired}}</mat-error>
+      </mat-form-field>
 
-      <label>Start Time:</label>
-      <input formControlName="start_time" type="datetime-local" />
+      <mat-form-field class="medium-input" appearance="outline">
+        <mat-label>Start Time:</mat-label>
+        <input matInput type="datetime-local" formControlName="start_time" class="form-control" min="{{today}}"
+          placeholder="Start Time" (change)="onStartTimeChange()" required>
+        <mat-error
+          *ngIf="jobForm.get('start_time')?.invalid && jobForm.get('start_time')?.touched && jobForm.get('start_time')?.hasError('required')">{{startTimeRequired}}</mat-error>
+        <mat-error *ngIf="startTimePassedFlag">{{startTimePassed}}</mat-error>
+      </mat-form-field>
 
-      <label>End Time:</label>
-      <input formControlName="end_time" type="datetime-local" />
+      <mat-form-field class="medium-input" appearance="outline">
+        <mat-label>End Time:</mat-label>
+        <input matInput type="datetime-local" formControlName="end_time" class="form-control" min="{{today}}"
+          placeholder="End Time" (change)="onEndTimeChange()" required>
+        <mat-error
+          *ngIf="jobForm.get('end_time')?.invalid && jobForm.get('end_time')?.touched && jobForm.get('end_time')?.hasError('required')">{{endTimeRequired}}</mat-error>
+        <mat-error *ngIf="jobForm.hasError('endTimeBeforeStartTime', ['end_time'])">{{endTimeError}}</mat-error>
+        <mat-error *ngIf="endTimePassedFlag">{{endTimePassed}}</mat-error>
+      </mat-form-field>
 
-      <label>Remarks:</label>
-      <input formControlName="remarks" type="text" />
-
-      <button type="button" (click)="onFormSubmit()">Submit</button>
+      <mat-form-field class="extra-long-input" appearance="outline">
+        <mat-label>Remarks:</mat-label>
+        <input matInput type="text" formControlName="remarks" class="form-control remark"
+          title="{{jobForm.get('remarks')?.value}}" placeholder="Remarks">
+      </mat-form-field>
     </form>
-  </div>
+    <div class="action-buttons">
+      <button mat-stroked-button (click)="onFormReset()">
+        <mat-icon>clear_all</mat-icon>
+        Reset
+      </button>
+      <button mat-stroked-button (click)="onFormSubmit()" [disabled]="jobForm.invalid">
+        <mat-icon>save</mat-icon>
+        Save
+      </button>
+    </div>
+  </section>
+  <mat-divider></mat-divider>
+  <section class="job-table-section">
+    <h5>Jobs:</h5>
+    <div class="job-container mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+        <!-- MACHINE Column -->
+        <ng-container matColumnDef="machine">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Machine </th>
+          <td mat-cell *matCellDef="let element"> {{element.machine}} </td>
+        </ng-container>
+        <!-- JOB NAME Column -->
+        <ng-container matColumnDef="jobName">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="header-container">
+              <div mat-sort-header>Job Name</div>
+              <div>
+                <mat-form-field>
+                  <mat-label>Search</mat-label>
+                  <input matInput [formControl]="jobNameFilter">
+                </mat-form-field>
+              </div>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.job_name}} </td>
+        </ng-container>
+        <!-- OPERATOR NAME Column -->
+        <ng-container matColumnDef="operatorName">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="header-container">
+              <div mat-sort-header>Operator Name</div>
+              <div>
+                <mat-form-field>
+                  <mat-label>Search</mat-label>
+                  <input matInput [formControl]="operatorNameFilter">
+                </mat-form-field>
+              </div>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.operator_name}} </td>
+        </ng-container>
+        <!-- TARGET QTY Column -->
+        <ng-container matColumnDef="targetQty">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Target Qty </th>
+          <td mat-cell *matCellDef="let element"> {{element.target_qty}} </td>
+        </ng-container>
+        <!-- ACTUAL QTY Column -->
+        <ng-container matColumnDef="actualQty">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Actual Qty </th>
+          <td mat-cell *matCellDef="let element"> {{element.actual_qty}} </td>
+        </ng-container>
+        <!-- START TIME Column -->
+        <ng-container matColumnDef="startTime">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Time </th>
+          <td mat-cell *matCellDef="let element"> {{element.start_time.toString() | date:'dd/MM/yyyy HH:mm':'UTC'}}
+          </td>
+        </ng-container>
+        <!-- START TIME Column -->
+        <ng-container matColumnDef="endTime">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> End Time </th>
+          <td mat-cell *matCellDef="let element"> {{element.end_time | date:'dd/MM/yyyy HH:mm':'UTC'}} </td>
+        </ng-container>
+        <!-- REMARKS Column -->
+        <ng-container matColumnDef="remarks">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Remarks </th>
+          <td mat-cell *matCellDef="let element"> {{element.remarks}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" sticky></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+            No data matching the filter.
+          </td>
+        </tr>
+      </table>
+    </div>
+    <mat-paginator showFirstLastButtons [length]="totalCount" [pageSize]="pageSize"
+    [pageSizeOptions]="[2, 5, 10, 25, 50]" (page)="onPageChange($event)">
+  </mat-paginator>
+  </section>
 </div>
-
-
