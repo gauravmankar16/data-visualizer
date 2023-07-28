@@ -37,18 +37,26 @@ export class SupervisorBoardComponent implements OnInit {
   endTimeError = constants.messages.endTimeError;
   endTimePassed = constants.messages.endTimePassed;
   startTimePassed = constants.messages.startTimePassed;
+  remarksAfterTargetAdjust = constants.messages.remarksAfterTargetAdjust;
+  setEndTime = constants.messages.setEndTime;
+  endTimeCannotBeIncreased = constants.messages.endTimeCannotBeIncreased;
+  remarksMessage = constants.messages.remarks;
   endTimePassedFlag: boolean = false;
   startTimePassedFlag: boolean = false;
+  targetQtyLessThanOneFlag: boolean = false;
 
   currentPage = 0;
   pageSize = 10;
   totalCount: number;
   rowSelected: any;
+  endTime: any;
 
   filterValues = {
     job_name: '',
     operator_name: ''
   }
+
+  newTargetQtyAfterAdjusting: number
 
   jobForm: FormGroup;
   jobData: any;
@@ -80,8 +88,7 @@ export class SupervisorBoardComponent implements OnInit {
     private formBuilder: FormBuilder,
     private _api: ApiService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private datePipe: DatePipe
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -99,7 +106,7 @@ export class SupervisorBoardComponent implements OnInit {
       actual_qty: [0, Validators.required],
       start_time: ['', Validators.required],
       end_time: ['', Validators.required],
-      remarks: ['System generated: Actual quantity is not updated']
+      remarks: [this.remarksMessage]
     });
   }
 
@@ -135,25 +142,54 @@ export class SupervisorBoardComponent implements OnInit {
       if (new Date(this.jobForm.value.end_time) < new Date(selectedRowEndTime)) {
         this.autoAdjustTargetQty(this.rowSelected, this.jobForm);
       } else {
-        // this.jobForm.controls['end_time'].setValue(selectedRowEndTime);
-        // this.snackBar.open('End time cannot be increased after setting once. Please create new job', 'X', {
-        //   duration: 5000
-        // });
+        //uncomment this later
+        this.jobForm.controls['end_time'].setValue(selectedRowEndTime);
+        this.snackBar.open(this.endTimeCannotBeIncreased, 'X', {
+          duration: 5000
+        });
       }
     }
   }
 
-  newTargetQtyAfterAdjusting: number
+
   autoAdjustTargetQty(rowSelected, jobForm) {
     let orgEndTime = new Date(new Date(rowSelected.end_time).toISOString().slice(0, 16)).getTime();
     let orgStartTime = new Date(new Date(rowSelected.start_time).toISOString().slice(0, 16)).getTime()
-    const originalDiff = Math.round((orgEndTime - orgStartTime) / 60000);
+    let originalDiff = Math.round((orgEndTime - orgStartTime) / 60000);
+    this.endTime = jobForm?.get('end_time')?.value
 
-    const updatedDiff = Math.round((new Date(jobForm?.get('end_time')?.value).getTime() - new Date(jobForm?.get('start_time')?.value).getTime()) / 60000);
-    const newTargetQty = Math.round(rowSelected.target_qty * updatedDiff / originalDiff);
-    console.log(newTargetQty, 'newTargetQty\n');
-    this.newTargetQtyAfterAdjusting = newTargetQty
-  }
+    let updatedDiff = Math.round((new Date(jobForm?.get('end_time')?.value).getTime() - new Date(jobForm?.get('start_time')?.value).getTime()) / 60000);
+    let newTargetQty = Math.round(rowSelected.target_qty * updatedDiff / originalDiff);
+      if(newTargetQty >= 1) {
+        console.log(newTargetQty, 'newTargetQty\n');
+        this.newTargetQtyAfterAdjusting = newTargetQty
+        this.targetQtyLessThanOneFlag = false;
+      } else {
+        this.targetQtyLessThanOneFlag = true;
+
+        while (newTargetQty < 1) {
+          const newEndTime = new Date(new Date(this.endTime).getTime() + 60000); // Increment end_time by 1 minute
+
+          //the below line will not work.  // The reason for this discrepancy is that the toISOString method returns the date in UTC time zone.
+          // jobForm.get('end_time').setValue(newEndTime.toISOString());
+          // you can manually format the date by extracting the individual components and constructing the string:
+          const dateObject = new Date(newEndTime);
+
+          const year = dateObject.getFullYear();
+          const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+          const day = String(dateObject.getDate()).padStart(2, '0');
+          const hours = String(dateObject.getHours()).padStart(2, '0');
+          const minutes = String(dateObject.getMinutes()).padStart(2, '0');
+
+          const formattedDateString = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+          this.endTime = formattedDateString
+          const updatedDiff = Math.round((newEndTime.getTime() - new Date(jobForm?.get('start_time')?.value).getTime()) / 60000);
+          newTargetQty = Math.round(rowSelected.target_qty * updatedDiff / originalDiff);
+        }
+        this.newTargetQtyAfterAdjusting = newTargetQty;
+      }
+    }
 
   ngAfterViewInit() {
 
@@ -205,6 +241,7 @@ export class SupervisorBoardComponent implements OnInit {
 
     this.jobForm.get('machine')?.disable();
     this.jobForm.get('job_name')?.disable();
+    //uncomment this later
     this.jobForm.get('target_qty')?.disable();
 
     //before patching check conditions for start_time and end_time, and disable them accordingly
@@ -255,23 +292,14 @@ export class SupervisorBoardComponent implements OnInit {
       dialogRef.afterClosed().subscribe((result) => {
         if (result) {
           // User confirmed, proceed with saving
-          let formData: any = {
-            // actual_qty: 0,
-            // end_time: new Date(),
-            // id: 0,
-            // job_name: '',
-            // machine: '',
-            // operator_name: '',
-            // remarks: '',
-            // start_time: new Date(),
-            // target_qty: 0,
-            // update_by: ''
-          };
-          console.log("Form Data : ",formData)
+          let formData: any = {}
           Object.assign(formData, this.jobForm.getRawValue());
+          console.log("Form Data : ",formData)
           formData['updated_by'] = JSON.parse(localStorage.getItem('userData') || '{}')?.rows[0]?.username;
           if (this.isEdit) {
             formData['target_qty'] = this.newTargetQtyAfterAdjusting ? this.newTargetQtyAfterAdjusting : formData['target_qty'];
+            formData['remarks'] = this.newTargetQtyAfterAdjusting ? 'System generated: Target quantity auto adjusted' : formData['remarks']
+            this.newTargetQtyAfterAdjusting = 0;
             console.log(formData, 'formDataformData');
             // Call the service method to send the updated data back to the server
             this._api.postTypeRequest('manageJobs/update', formData).subscribe({

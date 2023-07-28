@@ -235,12 +235,13 @@
           title="{{jobForm.get('remarks')?.value}}" placeholder="Remarks">
       </mat-form-field>
     </form>
+    <p *ngIf="targetQtyLessThanOneFlag">{{ setEndTime }} {{ endTime }}</p>
     <div class="action-buttons">
       <button mat-stroked-button (click)="onFormReset()">
         <mat-icon>clear_all</mat-icon>
         Reset
       </button>
-      <button mat-stroked-button (click)="onFormSubmit()" [disabled]="jobForm.invalid">
+      <button mat-stroked-button (click)="onFormSubmit()" [disabled]="jobForm.invalid || targetQtyLessThanOneFlag">
         <mat-icon>save</mat-icon>
         Save
       </button>
