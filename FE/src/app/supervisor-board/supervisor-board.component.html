@@ -168,10 +168,10 @@
 
   <!-- new new new ui -->
   <section class="add-job-section">
-    <h5>Add Job Details:</h5>
+    <p class="section-heading">ADD JOB :</p>
     <form [formGroup]="jobForm">
-      <mat-form-field class="short-input" appearance="outline">
-        <mat-label>Machine:</mat-label>
+      <mat-form-field class="machine-input" appearance="outline">
+        <mat-label>Machine</mat-label>
         <mat-select placeholder="Machine" formControlName="machine">
           <mat-option *ngFor="let category of machines" [value]="category.name">{{category.name}}</mat-option>
         </mat-select>
@@ -180,38 +180,38 @@
       </mat-form-field>
 
       <mat-form-field class="long-input" appearance="outline">
-        <mat-label>Job Name:</mat-label>
+        <mat-label>Job Name</mat-label>
         <input matInput type="text" formControlName="job_name" class="form-control" placeholder="Job Name" required>
         <mat-error
           *ngIf="jobForm.get('job_name')?.invalid && jobForm.get('job_name')?.touched">{{jobNameRequired}}</mat-error>
       </mat-form-field>
 
       <mat-form-field class="long-input" appearance="outline">
-        <mat-label>Operator Name:</mat-label>
+        <mat-label>Operator Name</mat-label>
         <input matInput type="text" formControlName="operator_name" class="form-control" placeholder="Operator Name"
           required>
         <mat-error
           *ngIf="jobForm.get('operator_name')?.invalid && jobForm.get('operator_name')?.touched">{{operatorNameRequired}}</mat-error>
       </mat-form-field>
 
-      <mat-form-field class="short-input" appearance="outline">
-        <mat-label>Target Qty:</mat-label>
+      <mat-form-field class="qty-input" appearance="outline">
+        <mat-label>Target Qty</mat-label>
         <input matInput type="number" formControlName="target_qty" class="form-control" placeholder="Target Qty"
           required>
         <mat-error
           *ngIf="jobForm.get('target_qty')?.invalid && jobForm.get('target_qty')?.touched">{{targetQtyRequired}}</mat-error>
       </mat-form-field>
 
-      <mat-form-field class="short-input" appearance="outline">
-        <mat-label>Actual Qty:</mat-label>
+      <mat-form-field class="qty-input" appearance="outline">
+        <mat-label>Actual Qty</mat-label>
         <input matInput type="number" formControlName="actual_qty" class="form-control" placeholder="Actual Qty"
           required>
         <mat-error
           *ngIf="jobForm.get('actual_qty')?.invalid && jobForm.get('actual_qty')?.touched">{{actualyQtyRequired}}</mat-error>
       </mat-form-field>
 
-      <mat-form-field class="medium-input" appearance="outline">
-        <mat-label>Start Time:</mat-label>
+      <mat-form-field class="time-input" appearance="outline">
+        <mat-label>Start Time</mat-label>
         <input matInput type="datetime-local" formControlName="start_time" class="form-control" min="{{today}}"
           placeholder="Start Time" (change)="onStartTimeChange()" required>
         <mat-error
@@ -219,8 +219,8 @@
         <mat-error *ngIf="startTimePassedFlag">{{startTimePassed}}</mat-error>
       </mat-form-field>
 
-      <mat-form-field class="medium-input" appearance="outline">
-        <mat-label>End Time:</mat-label>
+      <mat-form-field class="time-input" appearance="outline">
+        <mat-label>End Time</mat-label>
         <input matInput type="datetime-local" formControlName="end_time" class="form-control" min="{{today}}"
           placeholder="End Time" (change)="onEndTimeChange()" required>
         <mat-error
@@ -230,7 +230,7 @@
       </mat-form-field>
 
       <mat-form-field class="extra-long-input" appearance="outline">
-        <mat-label>Remarks:</mat-label>
+        <mat-label>Remarks</mat-label>
         <input matInput type="text" formControlName="remarks" class="form-control remark"
           title="{{jobForm.get('remarks')?.value}}" placeholder="Remarks">
       </mat-form-field>
@@ -249,7 +249,7 @@
   </section>
   <mat-divider></mat-divider>
   <section class="job-table-section">
-    <h5>Jobs:</h5>
+    <p class="section-heading">JOBS :</p>
     <div class="job-container mat-elevation-z8">
       <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
         <!-- MACHINE Column -->
@@ -322,9 +322,10 @@
           </td>
         </tr>
       </table>
+      <mat-paginator showFirstLastButtons
+      [length]="totalCount" [pageSize]="pageSize"
+      [pageSizeOptions]="[2, 5, 10, 25, 50]" (page)="onPageChange($event)">
+    </mat-paginator>
     </div>
-    <mat-paginator showFirstLastButtons [length]="totalCount" [pageSize]="pageSize"
-    [pageSizeOptions]="[2, 5, 10, 25, 50]" (page)="onPageChange($event)">
-  </mat-paginator>
   </section>
 </div>

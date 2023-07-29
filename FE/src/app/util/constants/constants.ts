@@ -21,10 +21,11 @@ export const constants = {
     updateMessage: 'Updated successfully',
     saveMessage: 'Saved successfully',
     errorMessage: 'Something went wrong!',
-    setEndTime: 'Please set end time to the give value for the target quantity to be atleast 1.     ',
+    setEndTime: 'Please set end time to the give value for the target quantity to be atleast 1.',
     remarksAfterTargetAdjust: 'System generated: Target quantity auto adjusted',
     remarks: 'System generated: Actual quantity is not updated',
-    endTimeCannotBeIncreased: 'End time cannot be increased after setting once. Please create new job'
+    endTimeCannotBeIncreased: 'End time cannot be increased after setting once. Please create new job',
+    machineOccupied: 'Time range already exist for selected machine',
   }
 
 }
