@@ -18,7 +18,7 @@ const pool = new Pool({
 // const pool = new Pool({
 //   user: "postgres",
 //   host: "localhost",
-//   database: "nikola",
+//   database: "postgres",
 //   password: "password",
 //   port: 5436,
 // });
@@ -88,7 +88,7 @@ router.post("/login", async function (req, res, next) {
       const hashed_password = md5(password.toString());
       if (userDetails?.rows[0]?.password == hashed_password) {
         let token = jwt.sign({ data: userDetails }, "secret", {
-          expiresIn: "1h",
+          expiresIn: "2h",
         });
         res.send({ status: 1, data: userDetails, token: token });
       } else {

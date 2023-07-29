@@ -4,6 +4,7 @@ import { ApiService } from '../services/api.service';
 
 import { DateValidator, validateEmail } from './table-validators.service';
 import { AuthService } from '../services/auth.service';
+import { Jobs } from '../util/models/jobs.model';
 
 @Component({
   selector: 'app-supervisor-dashboard',
@@ -143,17 +144,40 @@ export class SupervisorDashboardComponent {
     console.log(this.jobForm.getRawValue(), 'old Val');
     let userName: string = JSON.parse(localStorage.getItem('userData') || '{}')?.rows[0]?.username;
     let submitForm = this.jobForm.getRawValue();
+    console.log("submitForm", submitForm)
 
-    submitForm.jobs.forEach((element, index) => {
-      element['updatedBy'] = userName;
-      const newTargetQty = this.jobForm.value.jobs[index]?.newTargetQty;
-      if (newTargetQty) {
-        element.targetQty = newTargetQty;
-        element.remarks = 'System generated: Target quantity auto adjusted'
-      }
-    });
+    let jobData: any = {};
+    // submitForm.jobs.forEach((element, index) => {
+      // element['updatedBy'] = userName;
+      // const newTargetQty = this.jobForm.value.jobs[index]?.newTargetQty;
+      // if (newTargetQty) {
+      //   element.targetQty = newTargetQty;
+      //   element.remarks = 'System generated: Target quantity auto adjusted'
+      // }
+    //   jobData.actual_qty = element.actualQty
+    //   jobData.end_time = element.endTime
+    //   jobData.start_time = element.startTime
+    //   jobData.machine  = element.machine
+    //   jobData.job_name = element.jobName
+    //   jobData.operator_name = element.operatorName
+    //   jobData.target_qty = element.targetQty
+    //   jobData.update_by = element.updatedBy
+    //   jobData.remarks = element.remarks
+    // });
 
-    this._api.postTypeRequest('manageJobs/save', submitForm).subscribe((res: any) => {
+      jobData['actual_qty'] = submitForm.jobs[0].actualQty
+      jobData['end_time'] = submitForm.jobs[0].endTime
+      jobData['start_time'] = submitForm.jobs[0].startTime
+      jobData['machine']  = submitForm.jobs[0].machine
+      jobData['job_name'] = submitForm.jobs[0].jobName
+      jobData['operator_name'] = submitForm.jobs[0].operatorName
+      jobData['target_qty'] = submitForm.jobs[0].targetQty
+      jobData['update_by'] = submitForm.jobs[0].updatedBy
+      jobData['remarks'] = submitForm.jobs[0].remarks
+
+      let jobsArr: any[] = []
+      jobsArr.push(jobData)
+    this._api.postTypeRequest('manageJobs/save', {jobs:jobsArr}).subscribe((res: any) => {
       this.jobForm.reset();
       this.jobForm = this.fb.group({
         jobs: this.fb.array([])

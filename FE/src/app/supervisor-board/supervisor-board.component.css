@@ -1,0 +1,158 @@
+.job-container {
+  display: flex;
+  flex-direction: column;
+  /* max-height: 500px; */
+  min-width: 300px;
+  height: 444px;
+}
+
+.mat-table {
+  overflow: auto;
+  max-height: 500px;
+}
+
+.header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+}
+
+/* .mat-row .mat-cell {
+  cursor: pointer;
+} */
+
+.mat-row:hover .mat-cell{
+  background-color: #b4b4b433;
+  cursor: pointer;
+}
+
+/* .single-line-form {
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  margin-right: 1px;
+}
+
+button {
+  margin-left: 5px;
+} */
+
+.single-line-form {
+  display: flex;
+  align-items: center; /* Vertically center the form elements */
+  gap: 10px; /* Adjust the gap between form inputs */
+  overflow-x: auto; /* Enable horizontal scrolling if the form overflows the container */
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-input {
+  flex: 1; /* Use equal space for each form input to distribute them in a single line */
+  max-width: 200px; /* Limit the maximum width of each form input to avoid overflow */
+}
+
+/* Custom styles for "Target Qty" and "Actual Qty" form inputs */
+.form-input.short-input {
+  max-width: 100px; /* Adjust the width of the short inputs */
+}
+
+.form-input.remarks {
+  max-width: 360px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.mat-divider {
+  margin: 10px;
+  border-top-width: 2px;
+}
+
+button {
+  width: 100px;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.warning-message {
+  color: orange;
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+/* New ui below */
+.add-job-section {
+  font-size: 14px;
+  padding: 5px 10px;
+}
+
+.job-table-section {
+  padding: 0px 10px;
+}
+
+.form-control:focus {
+  box-shadow: none;
+}
+
+.add-job-card {
+  max-width: 90%;
+}
+
+.mat-card-title {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.mat-card-actions {
+  padding-top: 0 !important;
+}
+
+.remark {
+  text-overflow: ellipsis;
+}
+
+form {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.short-input {
+  /* max-width: 110px; */
+  max-width: 8%;
+}
+
+.long-input {
+  /* width: 285px; */
+  width: 15%;
+}
+
+.medium-input {
+  /* width: 180px; */
+  width: 10%;
+}
+
+.extra-long-input {
+  width: 26%;
+}
+/* sllssmme */
+
+/* 8 15 15 8 8 12 12 22 */
+
+/* .form-control:disabled {
+  background-color: white;
+} */

@@ -8,10 +8,8 @@ import { map } from 'rxjs/operators';
 export class ApiService {
   constructor(private _http: HttpClient) {
   }
-  getTypeRequest(url) {
-    return this._http.get(`${environment.apiUrl}/${url}`).pipe(map(res => {
-      return res;
-    }));
+  getTypeRequest(url, params?) {
+    return this._http.get(`${environment.apiUrl}/${url}`, { params });
   }
   postTypeRequest(url, payload) {
     return this._http.post(`${environment.apiUrl}/${url}`, payload).pipe(map(res => {

@@ -10,6 +10,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { CommonModule } from '@angular/common';
 import { AppComponent } from './app.component';
@@ -26,6 +29,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { LoaderService } from './services/loader.service';
 import { LoaderInterceptor } from './interceptors/loader-interceptor.service';
+import { SupervisorBoardComponent } from './supervisor-board/supervisor-board.component';
+import { MatSortModule } from '@angular/material/sort';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
+
 
 @NgModule({
   declarations: [
@@ -34,7 +42,9 @@ import { LoaderInterceptor } from './interceptors/loader-interceptor.service';
     HeaderComponent,
     HomeComponent,
     ProfileComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    SupervisorBoardComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -52,7 +62,12 @@ import { LoaderInterceptor } from './interceptors/loader-interceptor.service';
     RouterModule,
     AuthModule,
     MatSelectModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatSnackBarModule
   ],
   providers: [
     LoaderService,

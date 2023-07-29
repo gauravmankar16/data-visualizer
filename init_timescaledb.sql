@@ -2,7 +2,7 @@
 CREATE EXTENSION btree_gist;
 CREATE TABLE IF NOT EXISTS job_details
 (
-    id integer NOT NULL,
+    id serial,
     machine text NOT NULL,
     job_name text NOT NULL,
     operator_name text NOT NULL,
@@ -10,7 +10,9 @@ CREATE TABLE IF NOT EXISTS job_details
     target_qty integer NOT NULL,
     actual_qty integer NOT NULL,
     remarks text,
-    updatedby text,
+    updated_by text,
+    start_time timestamp WITH TIME ZONE NOT NULL,
+    end_time timestamp WITH TIME ZONE NOT NULL,
     CONSTRAINT job_details_pkey PRIMARY KEY (id),
     CONSTRAINT job_details_machine_shift_excl EXCLUDE USING gist (
         machine WITH =,
