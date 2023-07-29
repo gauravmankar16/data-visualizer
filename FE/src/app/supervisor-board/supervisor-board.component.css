@@ -15,7 +15,6 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-
 }
 
 /* .mat-row .mat-cell {
@@ -74,7 +73,7 @@ button {
 }
 
 .mat-divider {
-  margin: 10px;
+  margin: 5px;
   border-top-width: 2px;
 }
 
@@ -100,8 +99,23 @@ button {
   padding: 5px 10px;
 }
 
+.section-heading {
+  font-family: sans-serif;
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
 .job-table-section {
   padding: 0px 10px;
+}
+
+.job-table-section tr.mat-row, tr.mat-footer-row {
+  height: 40px;
+}
+
+::ng-deep.mat-sort-header-content {
+  font-weight: bold !important;
+  font-size: 14px;
 }
 
 .form-control:focus {
@@ -131,27 +145,35 @@ form {
   gap: 5px;
 }
 
+.machine-input {
+  max-width: 8%;
+}
+
 .short-input {
   /* max-width: 110px; */
   max-width: 8%;
 }
 
-.long-input {
-  /* width: 285px; */
-  width: 15%;
+.qty-input {
+  max-width: 6%;
 }
 
-.medium-input {
+.long-input {
+  /* width: 285px; */
+  width: 14%;
+}
+
+.time-input {
   /* width: 180px; */
-  width: 10%;
+  width: 13%;
 }
 
 .extra-long-input {
   width: 26%;
 }
-/* sllssmme */
+/* m j o qty qty stime etime remarks */
 
-/* 8 15 15 8 8 12 12 22 */
+/* 8 15 15 6 6 12 12 26  */
 
 /* .form-control:disabled {
   background-color: white;

@@ -45,7 +45,7 @@ export class SupervisorBoardComponent implements OnInit {
   startTimePassedFlag: boolean = false;
   targetQtyLessThanOneFlag: boolean = false;
 
-  currentPage = 0;
+  currentPage = 1;
   pageSize = 10;
   totalCount: number;
   rowSelected: any;
@@ -137,10 +137,23 @@ export class SupervisorBoardComponent implements OnInit {
       this.jobForm.get('end_time')?.enable();
     }
 
-    if(this.isEdit && !this.jobForm.controls['end_time'].disabled) {
+    if (this.isEdit && !this.jobForm.controls['end_time'].disabled) {
       let selectedRowEndTime = new Date(this.rowSelected.end_time).toISOString().slice(0, 16)
       if (new Date(this.jobForm.value.end_time) < new Date(selectedRowEndTime)) {
-        this.autoAdjustTargetQty(this.rowSelected, this.jobForm);
+        // Show the confirmation dialog before saving
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+          width: '400px',
+          data: { title: 'Confirm', message: 'Target quantity would be auto adjusted, are you sure you want to proceed?' }
+        });
+
+        // Handle the dialog result when the user closes the dialog
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.autoAdjustTargetQty(this.rowSelected, this.jobForm);
+          } else {
+            this.jobForm.controls['end_time'].setValue(selectedRowEndTime);
+          }
+        });
       } else {
         //uncomment this later
         this.jobForm.controls['end_time'].setValue(selectedRowEndTime);
@@ -160,36 +173,36 @@ export class SupervisorBoardComponent implements OnInit {
 
     let updatedDiff = Math.round((new Date(jobForm?.get('end_time')?.value).getTime() - new Date(jobForm?.get('start_time')?.value).getTime()) / 60000);
     let newTargetQty = Math.round(rowSelected.target_qty * updatedDiff / originalDiff);
-      if(newTargetQty >= 1) {
-        console.log(newTargetQty, 'newTargetQty\n');
-        this.newTargetQtyAfterAdjusting = newTargetQty
-        this.targetQtyLessThanOneFlag = false;
-      } else {
-        this.targetQtyLessThanOneFlag = true;
+    if (newTargetQty >= 1) {
+      console.log(newTargetQty, 'newTargetQty\n');
+      this.newTargetQtyAfterAdjusting = newTargetQty
+      this.targetQtyLessThanOneFlag = false;
+    } else {
+      this.targetQtyLessThanOneFlag = true;
 
-        while (newTargetQty < 1) {
-          const newEndTime = new Date(new Date(this.endTime).getTime() + 60000); // Increment end_time by 1 minute
+      while (newTargetQty < 1) {
+        const newEndTime = new Date(new Date(this.endTime).getTime() + 60000); // Increment end_time by 1 minute
 
-          //the below line will not work.  // The reason for this discrepancy is that the toISOString method returns the date in UTC time zone.
-          // jobForm.get('end_time').setValue(newEndTime.toISOString());
-          // you can manually format the date by extracting the individual components and constructing the string:
-          const dateObject = new Date(newEndTime);
+        //the below line will not work.  // The reason for this discrepancy is that the toISOString method returns the date in UTC time zone.
+        // jobForm.get('end_time').setValue(newEndTime.toISOString());
+        // you can manually format the date by extracting the individual components and constructing the string:
+        const dateObject = new Date(newEndTime);
 
-          const year = dateObject.getFullYear();
-          const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-          const day = String(dateObject.getDate()).padStart(2, '0');
-          const hours = String(dateObject.getHours()).padStart(2, '0');
-          const minutes = String(dateObject.getMinutes()).padStart(2, '0');
+        const year = dateObject.getFullYear();
+        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObject.getDate()).padStart(2, '0');
+        const hours = String(dateObject.getHours()).padStart(2, '0');
+        const minutes = String(dateObject.getMinutes()).padStart(2, '0');
 
-          const formattedDateString = `${year}-${month}-${day}T${hours}:${minutes}`;
+        const formattedDateString = `${year}-${month}-${day}T${hours}:${minutes}`;
 
-          this.endTime = formattedDateString
-          const updatedDiff = Math.round((newEndTime.getTime() - new Date(jobForm?.get('start_time')?.value).getTime()) / 60000);
-          newTargetQty = Math.round(rowSelected.target_qty * updatedDiff / originalDiff);
-        }
-        this.newTargetQtyAfterAdjusting = newTargetQty;
+        this.endTime = formattedDateString
+        const updatedDiff = Math.round((newEndTime.getTime() - new Date(jobForm?.get('start_time')?.value).getTime()) / 60000);
+        newTargetQty = Math.round(rowSelected.target_qty * updatedDiff / originalDiff);
       }
+      this.newTargetQtyAfterAdjusting = newTargetQty;
     }
+  }
 
   ngAfterViewInit() {
 
@@ -261,7 +274,7 @@ export class SupervisorBoardComponent implements OnInit {
       this.jobForm.get('end_time')?.enable();
     }
 
-    if(startTimeValue && endTimeValue && startTimeValue < currentTime) {
+    if (startTimeValue && endTimeValue && startTimeValue < currentTime) {
       this.jobForm.get('start_time')?.setErrors({ startTimePassed: true });
       this.startTimePassedFlag = true;
       this.jobForm.get('start_time')?.disable();
@@ -280,23 +293,26 @@ export class SupervisorBoardComponent implements OnInit {
     return formattedDateTime;
   }
 
-  onFormSubmit(): void {
+  onFormSubmit() {
     if (this.jobForm.valid) {
       // Show the confirmation dialog before saving
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         width: '400px',
-        data: { title: 'Confirm', message: 'Are you sure you want to save?' },
+        data: { title: 'Confirm', message: 'Machine selection, Job Name and Target Quantity are not editable, are you sure you want to save?' },
       });
 
       // Handle the dialog result when the user closes the dialog
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed().subscribe(async (result) => {
         if (result) {
           // User confirmed, proceed with saving
           let formData: any = {}
           Object.assign(formData, this.jobForm.getRawValue());
-          console.log("Form Data : ",formData)
+          console.log("Form Data : ", formData)
           formData['updated_by'] = JSON.parse(localStorage.getItem('userData') || '{}')?.rows[0]?.username;
           if (this.isEdit) {
+            if (formData.operator_name != this.rowSelected.operator_name) {
+              formData['remarks'] = `System generated: ${this.rowSelected.operator_name} updated to ${formData.operator_name} on ${new Date().toLocaleString()}`;
+            }
             formData['target_qty'] = this.newTargetQtyAfterAdjusting ? this.newTargetQtyAfterAdjusting : formData['target_qty'];
             formData['remarks'] = this.newTargetQtyAfterAdjusting ? 'System generated: Target quantity auto adjusted' : formData['remarks']
             this.newTargetQtyAfterAdjusting = 0;
@@ -304,24 +320,22 @@ export class SupervisorBoardComponent implements OnInit {
             // Call the service method to send the updated data back to the server
             this._api.postTypeRequest('manageJobs/update', formData).subscribe({
               next: (response: any) => {
-                this.jobForm.reset();
-                this.getJobs();
                 if (response.statusCode == 200) {
                   console.log('Form data updated successfully:', response);
                   this.snackBar.open(constants.messages.updateMessage, 'X', {
-                    duration: 4000
+                    duration: 5000
                   });
                 } else {
                   console.log("Error while updating jobs", response)
                   this.snackBar.open(constants.messages.errorMessage, 'X', {
-                    duration: 4000
+                    duration: 5000
                   });
                 }
               },
               error: (error) => {
                 console.error('Error thrown while updating jobs:', error);
                 this.snackBar.open(constants.messages.errorMessage, 'X', {
-                  duration: 4000
+                  duration: 5000
                 });
               }
             })
@@ -329,12 +343,16 @@ export class SupervisorBoardComponent implements OnInit {
             // Call the service method to save data back to the server
             this._api.postTypeRequest('manageJobs/save', formData).subscribe({
               next: (response: any) => {
-                this.jobForm.reset();
-                this.getJobs();
                 console.log('Form data saved successfully:', response);
                 if (response.statusCode == 201) {
                   this.snackBar.open(constants.messages.saveMessage, '', {
-                    duration: 4000
+                    duration: 5000
+                  });
+                }
+
+                if (response.statusCode == 500 && response.error.code == '23P01') {
+                  this.snackBar.open(constants.messages.machineOccupied, '', {
+                    duration: 5000
                   });
                 }
               },
@@ -343,6 +361,8 @@ export class SupervisorBoardComponent implements OnInit {
               }
             })
           }
+          this.onFormReset();
+          await this.getJobs();
         } else {
           // User cancelled, do nothing or show a message
         }
@@ -364,10 +384,10 @@ export class SupervisorBoardComponent implements OnInit {
     this.initForm();
   }
 
-  onPageChange(event: PageEvent): void {
-    this.currentPage = event.pageIndex;
+  async onPageChange(event: PageEvent) {
+    this.currentPage = event.pageIndex + 1;;
     this.pageSize = event.pageSize;
-    this.getJobs();
+    await this.getJobs();
   }
 
   createFilter(): (data: any, filter: string) => boolean {
