@@ -10,7 +10,7 @@ RUN apt-get update && apt-get -y install \
 
 RUN grafana-cli plugins install grafana-image-renderer
 
-
+# /var/lib/grafana/plugins/ -- plugins dir
 #RUN apt-get update && apt-get -y install \
 #    texlive-latex-base wget
 
