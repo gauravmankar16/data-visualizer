@@ -3,6 +3,9 @@ import { ApiService } from './../../../services/api.service'
 import { AuthService } from './../../../services/auth.service'
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { constants } from '../../../util/constants/constants';
+
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -14,7 +17,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private _api: ApiService,
     private _auth: AuthService,
-    private _router: Router
+    private _router: Router,
+    private snackBar: MatSnackBar
   ) { }
   ngOnInit() {
     this.isUserLogin();
@@ -23,8 +27,9 @@ export class RegisterComponent implements OnInit {
     this._api.postTypeRequest('user/register', form.value).subscribe((res: any) => {
       if (res.status) {
         console.log(res)
-        this._auth.setDataInLocalStorage('userData', JSON.stringify(res.data));
-        this._auth.setDataInLocalStorage('token', res.token);
+        this.snackBar.open(constants.messages.registerSuccess, 'X', {
+          duration: 3000
+        })
         this._router.navigate(['login']);
       } else {
         console.log(res)

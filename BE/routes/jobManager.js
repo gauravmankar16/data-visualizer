@@ -93,8 +93,8 @@ router.get("/get", auth.verifyToken, async (req, res, next) => {
     // }
     // res.send({ status: 1, data: resData });
 
-    const dataQuery = `SELECT * FROM job_details ORDER BY id OFFSET $1 LIMIT $2`;
-    const dataResult = await pool.query(dataQuery, [offset, pageSize]);
+    const dataQuery = `SELECT * FROM job_details ORDER BY id DESC LIMIT $1 OFFSET $2`;
+    const dataResult = await pool.query(dataQuery, [pageSize, offset]);
 
     const totalCountQuery = `SELECT COUNT(*) FROM job_details`;
     const totalCountResult = await pool.query(totalCountQuery);

@@ -26,6 +26,9 @@ export class LoginComponent implements OnInit {
       if (res.status) {
         this._auth.setDataInLocalStorage('userData', JSON.stringify(res.data));
         this._auth.setDataInLocalStorage('token', res.token);
+        let obj = res.data?.rows[0];
+        this._auth.userDetails['userName'] = obj?.username;
+        this._auth.userDetails['email'] = obj?.email;
         this._router.navigate(['']);
         this._auth.isLogin = true;
       } else {
@@ -39,6 +42,7 @@ export class LoginComponent implements OnInit {
     }
   }
   logout() {
+    this._auth.userDetails = {};
     this._auth.clearStorage()
     this._router.navigate(['']);
   }

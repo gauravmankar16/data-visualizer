@@ -40,13 +40,14 @@ export class SupervisorBoardComponent implements OnInit {
   remarksAfterTargetAdjust = constants.messages.remarksAfterTargetAdjust;
   setEndTime = constants.messages.setEndTime;
   endTimeCannotBeIncreased = constants.messages.endTimeCannotBeIncreased;
-  remarksMessage = constants.messages.remarks;
+  wrongStartTime = constants.messages.wrongStartTime;
+  endTimeLessThanCurrent = constants.messages.endTimeLessThanCurrent;
   endTimePassedFlag: boolean = false;
   startTimePassedFlag: boolean = false;
   targetQtyLessThanOneFlag: boolean = false;
 
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 50;
   totalCount: number;
   rowSelected: any;
   endTime: any;
@@ -103,10 +104,10 @@ export class SupervisorBoardComponent implements OnInit {
       job_name: ['', Validators.required],
       operator_name: ['', [Validators.required]],
       target_qty: [0, Validators.required],
-      actual_qty: [0, Validators.required],
+      actual_qty: [{ value: 0, disabled: true }, Validators.required],
       start_time: ['', Validators.required],
       end_time: ['', Validators.required],
-      remarks: [this.remarksMessage]
+      remarks: ['']
     });
   }
 
@@ -114,13 +115,18 @@ export class SupervisorBoardComponent implements OnInit {
     const startTimeValue = new Date(this.jobForm?.get('start_time')?.value);
     const endTimeValue = new Date(this.jobForm?.get('end_time')?.value);
 
-    if (startTimeValue && endTimeValue && endTimeValue < startTimeValue) {
-      this.jobForm.get('end_time')?.setErrors({ endTimeBeforeStartTime: true });
-    } else {
-      this.jobForm.get('end_time')?.setErrors(null);
-      this.endTimePassedFlag = false;
-      this.jobForm.get('start_time')?.enable();
-      this.jobForm.get('end_time')?.enable();
+    if (this.jobForm?.get('end_time')?.value && this.jobForm?.get('start_time')?.value) {
+      if (startTimeValue && endTimeValue && endTimeValue < startTimeValue) {
+        this.jobForm.get('end_time')?.setErrors({ endTimeBeforeStartTime: true });
+      } else {
+        this.jobForm.get('end_time')?.setErrors(null);
+        this.endTimePassedFlag = false;
+        this.jobForm.get('start_time')?.enable();
+        this.jobForm.get('end_time')?.enable();
+      }
+    }
+    if (this.jobForm?.get('start_time')?.value && new Date() >= startTimeValue) {
+      this.jobForm.get('start_time')?.setErrors({ wrongStartTime: true });
     }
   }
 
@@ -138,12 +144,15 @@ export class SupervisorBoardComponent implements OnInit {
     }
 
     if (this.isEdit && !this.jobForm.controls['end_time'].disabled) {
-      let selectedRowEndTime = new Date(this.rowSelected.end_time).toISOString().slice(0, 16)
+      let selectedRowEndTime = new Date(this.rowSelected.end_time).toISOString().slice(0, 16);
+      if (new Date(this.jobForm.value.end_time) < new Date()) {
+        this.jobForm.get('start_time')?.setErrors({ endTimeLessThanCurrent: true });
+      }
       if (new Date(this.jobForm.value.end_time) < new Date(selectedRowEndTime)) {
         // Show the confirmation dialog before saving
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
           width: '400px',
-          data: { title: 'Confirm', message: 'Target quantity would be auto adjusted, are you sure you want to proceed?' }
+          data: { title: 'Confirm', message: 'Target quantity will be auto adjusted, are you sure you want to proceed?' }
         });
 
         // Handle the dialog result when the user closes the dialog
@@ -267,6 +276,9 @@ export class SupervisorBoardComponent implements OnInit {
       this.endTimePassedFlag = true;
       this.jobForm.get('start_time')?.disable();
       this.jobForm.get('end_time')?.disable();
+
+      // Enable actual quantity only if end_time has elasped
+      this.jobForm.get('actual_qty')?.enable();
     } else {
       this.jobForm.get('end_time')?.setErrors(null);
       this.endTimePassedFlag = false;
@@ -298,11 +310,11 @@ export class SupervisorBoardComponent implements OnInit {
       // Show the confirmation dialog before saving
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         width: '400px',
-        data: { title: 'Confirm', message: 'Machine selection, Job Name and Target Quantity are not editable, are you sure you want to save?' },
+        data: { title: 'Confirm', message: this.isEdit ? 'Are you sure you want to update?' : 'Machine selection, Job Name and Target Quantity are not editable, are you sure you want to save?' },
       });
 
       // Handle the dialog result when the user closes the dialog
-      dialogRef.afterClosed().subscribe(async (result) => {
+      dialogRef.afterClosed().subscribe((result) => {
         if (result) {
           // User confirmed, proceed with saving
           let formData: any = {}
@@ -311,10 +323,10 @@ export class SupervisorBoardComponent implements OnInit {
           formData['updated_by'] = JSON.parse(localStorage.getItem('userData') || '{}')?.rows[0]?.username;
           if (this.isEdit) {
             if (formData.operator_name != this.rowSelected.operator_name) {
-              formData['remarks'] = `System generated: ${this.rowSelected.operator_name} updated to ${formData.operator_name} on ${new Date().toLocaleString()}`;
+              formData['remarks'] = formData.remarks + `\nSystem generated: Operator ${this.rowSelected.operator_name} updated to ${formData.operator_name} on ${new Date().toLocaleString()}`;
             }
             formData['target_qty'] = this.newTargetQtyAfterAdjusting ? this.newTargetQtyAfterAdjusting : formData['target_qty'];
-            formData['remarks'] = this.newTargetQtyAfterAdjusting ? 'System generated: Target quantity auto adjusted' : formData['remarks']
+            formData['remarks'] = this.newTargetQtyAfterAdjusting ? formData.remarks + '\nSystem generated: Target quantity auto adjusted' : formData['remarks']
             this.newTargetQtyAfterAdjusting = 0;
             console.log(formData, 'formDataformData');
             // Call the service method to send the updated data back to the server
@@ -361,8 +373,8 @@ export class SupervisorBoardComponent implements OnInit {
               }
             })
           }
+          this.getJobs();
           this.onFormReset();
-          await this.getJobs();
         } else {
           // User cancelled, do nothing or show a message
         }
@@ -384,10 +396,10 @@ export class SupervisorBoardComponent implements OnInit {
     this.initForm();
   }
 
-  async onPageChange(event: PageEvent) {
+  onPageChange(event: PageEvent) {
     this.currentPage = event.pageIndex + 1;;
     this.pageSize = event.pageSize;
-    await this.getJobs();
+    this.getJobs();
   }
 
   createFilter(): (data: any, filter: string) => boolean {

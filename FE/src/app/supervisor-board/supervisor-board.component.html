@@ -217,6 +217,7 @@
         <mat-error
           *ngIf="jobForm.get('start_time')?.invalid && jobForm.get('start_time')?.touched && jobForm.get('start_time')?.hasError('required')">{{startTimeRequired}}</mat-error>
         <mat-error *ngIf="startTimePassedFlag">{{startTimePassed}}</mat-error>
+        <mat-error *ngIf="jobForm.hasError('wrongStartTime', ['start_time'])">{{wrongStartTime}}</mat-error>
       </mat-form-field>
 
       <mat-form-field class="time-input" appearance="outline">
@@ -226,6 +227,7 @@
         <mat-error
           *ngIf="jobForm.get('end_time')?.invalid && jobForm.get('end_time')?.touched && jobForm.get('end_time')?.hasError('required')">{{endTimeRequired}}</mat-error>
         <mat-error *ngIf="jobForm.hasError('endTimeBeforeStartTime', ['end_time'])">{{endTimeError}}</mat-error>
+        <mat-error *ngIf="jobForm.hasError('endTimeLessThanCurrent', ['end_time'])">{{endTimeLessThanCurrent}}</mat-error>
         <mat-error *ngIf="endTimePassedFlag">{{endTimePassed}}</mat-error>
       </mat-form-field>
 
@@ -324,7 +326,7 @@
       </table>
       <mat-paginator showFirstLastButtons
       [length]="totalCount" [pageSize]="pageSize"
-      [pageSizeOptions]="[2, 5, 10, 25, 50]" (page)="onPageChange($event)">
+      [pageSizeOptions]="[5, 10, 25, 50]" (page)="onPageChange($event)">
     </mat-paginator>
     </div>
   </section>
