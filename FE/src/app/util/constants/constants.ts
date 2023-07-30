@@ -17,15 +17,18 @@ export const constants = {
     endTimeRequired: 'End time is required',
     endTimeError: 'End time cannot be before the start time',
     endTimePassed: 'End time has passed',
+    endTimeLessThanCurrent: 'End time cannot be less than current time',
     startTimePassed: 'Start time has passed',
     updateMessage: 'Updated successfully',
     saveMessage: 'Saved successfully',
     errorMessage: 'Something went wrong!',
     setEndTime: 'Please set end time to the give value for the target quantity to be atleast 1.',
     remarksAfterTargetAdjust: 'System generated: Target quantity auto adjusted',
-    remarks: 'System generated: Actual quantity is not updated',
     endTimeCannotBeIncreased: 'End time cannot be increased after setting once. Please create new job',
     machineOccupied: 'Time range already exist for selected machine',
+    registerSuccess: 'User registered successfully. Please login',
+    loginSucess: 'Logged in successfully',
+    wrongStartTime: 'Start time cannot be less then current time'
   }
 
 }

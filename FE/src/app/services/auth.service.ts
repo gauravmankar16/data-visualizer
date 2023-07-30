@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   isLogin: boolean = false;
+  userDetails: any = {};
 
   constructor(private _router: Router) { }
 
@@ -29,11 +30,17 @@ export class AuthService {
   logout() {
     this.isLogin = false;
     this.clearStorage();
+    this.userDetails = {};
     this._router.navigate(['/login']);
   }
 
   isUserLogin() {
     if (this.getUserDetails() != null) {
+      if (!this.userDetails.userName) {
+        let obj = JSON.parse(localStorage.getItem('userData') || '{}')?.rows[0];
+        this.userDetails['userName'] = obj?.username;
+        this.userDetails['email'] = obj?.email;
+      }
       this.isLogin = true;
     }
   }

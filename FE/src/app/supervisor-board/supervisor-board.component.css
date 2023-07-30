@@ -50,6 +50,9 @@ button {
   display: flex;
   flex-direction: column;
 }
+div {
+  white-space: pre-line;
+}
 
 .form-input {
   flex: 1; /* Use equal space for each form input to distribute them in a single line */
