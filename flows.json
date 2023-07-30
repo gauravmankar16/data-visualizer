@@ -1,0 +1,414 @@
+[
+    {
+        "id": "6498f90559c51077",
+        "type": "tab",
+        "label": "nikola-brothers-nodered-flow",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "7937646dca7460e7",
+        "type": "s7 endpoint",
+        "transport": "iso-on-tcp",
+        "address": "192.168.0.1",
+        "port": "102",
+        "rack": "0",
+        "slot": "1",
+        "localtsaphi": "01",
+        "localtsaplo": "00",
+        "remotetsaphi": "01",
+        "remotetsaplo": "00",
+        "connmode": "rack-slot",
+        "adapter": "",
+        "busaddr": "2",
+        "cycletime": "50",
+        "timeout": "30000",
+        "name": "PLC-1200-0",
+        "vartable": [
+            {
+                "addr": "MD50",
+                "name": "input pin 0"
+            }
+        ]
+    },
+    {
+        "id": "92bb65d6e6483e5e",
+        "type": "postgreSQLConfig",
+        "name": "nikola-db",
+        "host": "timescaledb",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "postgres",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "Temp",
+        "applicationNameType": "str",
+        "max": "50",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "postgres",
+        "userFieldType": "str",
+        "password": "password",
+        "passwordFieldType": "str"
+    },
+    {
+        "id": "6553f25b00dbc9b1",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-light",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#0094CE",
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#fafafa",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#1bbfff",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#0094ce",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey",
+                "palette": "light"
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "6acb8c4d732ea07b",
+        "type": "ui_tab",
+        "name": "GROUP2",
+        "icon": "dashboard2",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "7ed3eae5b265a9d5",
+        "type": "s7 endpoint",
+        "transport": "iso-on-tcp",
+        "address": "192.168.0.1",
+        "port": "102",
+        "rack": "0",
+        "slot": "1",
+        "localtsaphi": "01",
+        "localtsaplo": "00",
+        "remotetsaphi": "01",
+        "remotetsaplo": "00",
+        "connmode": "rack-slot",
+        "adapter": "",
+        "busaddr": "2",
+        "cycletime": "50",
+        "timeout": "30000",
+        "name": "plc-1200-1",
+        "vartable": [
+            {
+                "addr": "MD54",
+                "name": "input pin 1"
+            }
+        ]
+    },
+    {
+        "id": "ba0d9716f7706438",
+        "type": "s7 endpoint",
+        "transport": "iso-on-tcp",
+        "address": "192.168.0.1",
+        "port": "102",
+        "rack": "0",
+        "slot": "1",
+        "localtsaphi": "01",
+        "localtsaplo": "00",
+        "remotetsaphi": "01",
+        "remotetsaplo": "00",
+        "connmode": "rack-slot",
+        "adapter": "",
+        "busaddr": "2",
+        "cycletime": "50",
+        "timeout": "30000",
+        "name": "plc-1200-2",
+        "vartable": [
+            {
+                "addr": "MD58",
+                "name": "input pin 2"
+            }
+        ]
+    },
+    {
+        "id": "271a08fbe9dd72e7",
+        "type": "s7 endpoint",
+        "transport": "iso-on-tcp",
+        "address": "192.168.0.1",
+        "port": "102",
+        "rack": "0",
+        "slot": "1",
+        "localtsaphi": "01",
+        "localtsaplo": "00",
+        "remotetsaphi": "01",
+        "remotetsaplo": "00",
+        "connmode": "rack-slot",
+        "adapter": "",
+        "busaddr": "2",
+        "cycletime": "50",
+        "timeout": "30000",
+        "name": "plc-1200-3",
+        "vartable": [
+            {
+                "addr": "MD62",
+                "name": "input pin 3"
+            }
+        ]
+    },
+    {
+        "id": "b220dec3791a97a0",
+        "type": "debug",
+        "z": "6498f90559c51077",
+        "name": "pin0-debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 490,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "86280e7806e36414",
+        "type": "debug",
+        "z": "6498f90559c51077",
+        "name": "db-insert--debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "30eac0384902584b",
+        "type": "s7 in",
+        "z": "6498f90559c51077",
+        "endpoint": "7937646dca7460e7",
+        "mode": "single",
+        "variable": "input pin 0",
+        "diff": true,
+        "name": "MD50",
+        "x": 310,
+        "y": 80,
+        "wires": [
+            [
+                "587c933b1782afaf"
+            ]
+        ]
+    },
+    {
+        "id": "587c933b1782afaf",
+        "type": "postgresql",
+        "z": "6498f90559c51077",
+        "name": "nikola-db-0",
+        "query": "INSERT INTO sensor\nVALUES ('machine-1');",
+        "postgreSQLConfig": "92bb65d6e6483e5e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 490,
+        "y": 80,
+        "wires": [
+            [
+                "86280e7806e36414"
+            ]
+        ]
+    },
+    {
+        "id": "1860eabcb15006cc",
+        "type": "postgresql",
+        "z": "6498f90559c51077",
+        "name": "nikola-db-1",
+        "query": "INSERT INTO sensor\nVALUES ('machine-2');",
+        "postgreSQLConfig": "92bb65d6e6483e5e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 490,
+        "y": 140,
+        "wires": [
+            [
+                "86280e7806e36414"
+            ]
+        ]
+    },
+    {
+        "id": "02b9f4934414bd0c",
+        "type": "postgresql",
+        "z": "6498f90559c51077",
+        "name": "nikola-db-2",
+        "query": "INSERT INTO sensor\nVALUES ('machine-3');",
+        "postgreSQLConfig": "92bb65d6e6483e5e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 490,
+        "y": 200,
+        "wires": [
+            [
+                "86280e7806e36414"
+            ]
+        ]
+    },
+    {
+        "id": "a24e947ac2554470",
+        "type": "postgresql",
+        "z": "6498f90559c51077",
+        "name": "nikola-db-3",
+        "query": "INSERT INTO sensor\nVALUES ('machine-4');",
+        "postgreSQLConfig": "92bb65d6e6483e5e",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 490,
+        "y": 260,
+        "wires": [
+            [
+                "86280e7806e36414"
+            ]
+        ]
+    },
+    {
+        "id": "ec97b1ada64d3d1d",
+        "type": "s7 in",
+        "z": "6498f90559c51077",
+        "endpoint": "7ed3eae5b265a9d5",
+        "mode": "single",
+        "variable": "input pin 1",
+        "diff": true,
+        "name": "MD54",
+        "x": 310,
+        "y": 140,
+        "wires": [
+            [
+                "1860eabcb15006cc"
+            ]
+        ]
+    },
+    {
+        "id": "e58df6c5f76ec95b",
+        "type": "s7 in",
+        "z": "6498f90559c51077",
+        "endpoint": "ba0d9716f7706438",
+        "mode": "single",
+        "variable": "input pin 2",
+        "diff": true,
+        "name": "MD58",
+        "x": 310,
+        "y": 200,
+        "wires": [
+            [
+                "02b9f4934414bd0c"
+            ]
+        ]
+    },
+    {
+        "id": "8c24907ea54d04d3",
+        "type": "s7 in",
+        "z": "6498f90559c51077",
+        "endpoint": "271a08fbe9dd72e7",
+        "mode": "single",
+        "variable": "input pin 3",
+        "diff": true,
+        "name": "MD62",
+        "x": 310,
+        "y": 260,
+        "wires": [
+            [
+                "a24e947ac2554470"
+            ]
+        ]
+    }
+]

@@ -1,0 +1,66 @@
+#FROM grafana/grafana
+FROM ubuntu/grafana:latest
+
+WORKDIR /usr/share/grafana/bin
+
+USER root
+
+RUN apt-get update && apt-get -y install \
+	libx11-6 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrender1 libxtst6 libglib2.0-0 libnss3 libcups2  libdbus-1-3 libxss1 libxrandr2 libgtk-3-0 libasound2 libxcb-dri3-0 libgbm1 libxshmfence1
+
+RUN grafana-cli plugins install grafana-image-renderer
+
+
+#RUN apt-get update && apt-get -y install \
+#    texlive-latex-base wget
+
+#WORKDIR /home/grafana/
+
+#RUN wget https://golang.org/dl/go1.20.6.linux-amd64.tar.gz
+#RUN tar -xzf go1.20.6.linux-amd64.tar.gz
+
+#ENV PATH="$PATH:/home/grafana/go/bin"
+#RUN echo $PATH
+#ENV PATH="$PATH:/root/go/bin"
+#RUN echo $PATH
+
+#WORKDIR /home/grafana/go/src
+#RUN mkdir reporter
+#WORKDIR /home/grafana/go/src/reporter
+#RUN go mod init reporter
+#RUN go get github.com/IzakMarais/reporter/cmd/grafana-reporter
+#RUN go install -v github.com/IzakMarais/reporter/cmd/grafana-reporter
+
+#WORKDIR /root/go/bin
+
+#COPY start_script.sh start_script.sh
+#RUN echo "script copied=====>"
+#RUN cat start_script.sh
+#CMD grafana-reporter
+
+
+
+
+
+
+
+
+
+#RUN apt-get update
+#RUN apt-get -y install texlive-latex-base
+#wget https://golang.org/dl/go1.17.2.linux-amd64.tar.gz
+#RUN tar -xzf go1.17.2.linux-amd64.tar.gz
+#RUN apt-get -y install wget
+#RUN export PATH=$PATH:/home/grafana/go/bin
+#RUN export PATH=$PATH:/root/go/bin
+
+#RUN grafana-reporter &
+#CMD ["grafana-reporter &"]
+#ENTRYPOINT [ "/root/go/bin/grafana-reporter" ]
+#CMD sh -c "/root/go/bin/grafana-reporter"
+#CMD ["/root/go/bin/grafana-reporter"]
+
+#CMD ./start_script.sh
+
+#RUN cd /home/grafana/go/bin
+#-cmd_enable=1 -cmd_apiKey glsa_La4zX4JqJAHyy72Ilb9gBUVFrq027Y3M_b703c315 -ip localhost:3000 -cmd_dashboard e97d1de0-2cd9-4458-a69d-6e152ffdfab0 -cmd_ts from=now-1y -cmd_o out.pdf

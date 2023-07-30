@@ -1,0 +1,43 @@
+#FROM izakmarais/grafana-reporter:latest
+#FROM ubuntu
+#USER root
+#ENV DEBIAN_FRONTEND noninteractive
+#RUN apt-get update --fix-missing && apt-get -y install texlive-latex-base wget
+
+#FROM ubuntu:22.04
+#FROM grafana/grafana
+#RUN DEBIAN_FRONTEND=noninteractive \
+#  apt-get update \
+#  && apt-get -y install texlive-latex-base \
+#  && apt-get -y install wget
+
+FROM ubuntu/grafana:latest
+USER root  
+RUN apt-get update && apt-get -y install \
+    texlive-latex-base wget  
+    
+
+RUN wget https://golang.org/dl/go1.20.6.linux-amd64.tar.gz
+RUN tar -xzf go1.20.6.linux-amd64.tar.gz
+
+WORKDIR /home/grafana/
+
+RUN wget https://golang.org/dl/go1.20.6.linux-amd64.tar.gz
+RUN tar -xzf go1.20.6.linux-amd64.tar.gz
+
+ENV PATH="$PATH:/home/grafana/go/bin"
+RUN echo $PATH
+ENV PATH="$PATH:/root/go/bin"
+RUN echo $PATH
+
+WORKDIR /home/grafana/go/src
+RUN mkdir reporter
+WORKDIR /home/grafana/go/src/reporter
+RUN go mod init reporter
+RUN go get github.com/IzakMarais/reporter/cmd/grafana-reporter
+RUN go install -v github.com/IzakMarais/reporter/cmd/grafana-reporter
+
+WORKDIR /root/go/bin
+
+
+ENTRYPOINT [ "/root/go/bin/grafana-reporter", "-ip", "grafana:3000" ]

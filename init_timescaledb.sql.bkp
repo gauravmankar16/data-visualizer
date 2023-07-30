@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS job_details
     machine text NOT NULL,
     job_name text NOT NULL,
     operator_name text NOT NULL,
-    shift tstzrange NOT NULL,
+    shift tsrange NOT NULL,
     target_qty integer NOT NULL,
     actual_qty integer NOT NULL,
     remarks text,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS job_details
 CREATE TABLE IF NOT EXISTS sensor
 (
     machine text NOT NULL,
-    eventtime timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP
+    eventtime timestamp without time zone NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users

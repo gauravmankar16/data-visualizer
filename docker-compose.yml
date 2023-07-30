@@ -3,6 +3,21 @@ version: '3.8'
 services:
   # timescale container
   timescaledb:
+    # image: timescale/timescaledb-ha:pg14-latest
+    # restart: always
+    # container_name: timescale
+    # environment:
+      # - POSTGRES_USER=postgres
+      # - POSTGRES_PASSWORD=password
+      # - POSTGRES_DB=postgres
+      # - PGDATA=/var/lib/postgresql/data/pgdata
+      # - TZ=Asia/Kolkata
+      # - PGTZ=Asia/Kolkata
+    # ports:
+      # - '5432:5432'
+    # volumes:
+      # - ../data:/var/lib/postgresql
+      # - ./init_timescaledb.sql:/docker-entrypoint-initdb.d/init_timescaledb.sql
     build:
       context: .
       dockerfile: Dockerfile.timescaledb
@@ -11,12 +26,17 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: postgres
+      TZ: "Asia/Kolkata"
+      PGTZ: "Asia/Kolkata"
     ports:
       - '5432:5432'
     volumes:
     # Mount the init_timescaledb.sql file to the Docker container's /docker-entrypoint-initdb.d/ directory
     - ./init_timescaledb.sql:/docker-entrypoint-initdb.d/init_timescaledb.sql
-
+    - ../pgdata:/var/lib/postgresql
+    - ../timescaledata:/home/postgres/pgdata/
+    restart: always
+    
   # Node.js backend and Angular frontend containers
   web_app:
     build:
@@ -28,8 +48,66 @@ services:
     depends_on:
       - timescaledb
     environment:
-      - DATABASE_URL=postgres://postgres:password@timescaledb:5432/postgres
-
+      DATABASE_URL: postgres://postgres:password@timescaledb:5432/postgres
+      TZ: "Asia/Kolkata"
+    restart: always
+    
+  # Node.js backend and Angular frontend containers
+  nodered:
+    build:
+      context: .
+      dockerfile: Dockerfile.nodered
+    container_name: nodered
+    ports:
+      - "1880:1880"
+    depends_on:
+      - timescaledb
+    environment:
+      TZ: "Asia/Kolkata"
+      #- DATABASE_URL=postgres://postgres:password@timescaledb:5432/postgres
+    restart: always
+    
+  # Grafana container
+  grafana:
+    container_name: grafana
+    build:
+      context: .
+      dockerfile: Dockerfile.grafana
+    environment:
+      GF_DATABASE_TYPE: postgres
+      GF_DATABASE_HOST: timescaledb:5432
+      GF_DATABASE_NAME: postgres
+      GF_DATABASE_USER: postgres
+      GF_DATABASE_PASSWORD: password
+      GF_DATABASE_SSL_MODE: disable
+      TZ: "Asia/Kolkata"
+      # GF_USERS_ALLOW_SIGN_UP: "false"
+      # GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      # GF_AUTH_DISABLE_SIGNOUT_MENU: "true"
+      # GF_AUTH_ANONYMOUS_ENABLED: "true"
+      # GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+    restart: always
+    depends_on:
+        - timescaledb
+    ports:
+      - 4000:3000
+    volumes:
+      - ../grafana_data:/var/lib/grafana
+      
+  reporter:
+    container_name: reporter
+    build:
+      context: .
+      dockerfile: Dockerfile.grafana.reporter
+    #command: "-ip localhost:4000"
+    depends_on:
+        - grafana
+    ports:
+      - "8686:8686"
+    restart: always
+    
 volumes:
   timescaledb_data:
+    driver: local
+  grafana_data:
     driver: local
