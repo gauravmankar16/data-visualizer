@@ -39,3 +39,15 @@ CREATE TABLE IF NOT EXISTS users
 INSERT INTO users(
 	id, username, password, email, created_on)
 	VALUES (1, 'gau', 'gau', 'gau', '7/23/2023, 3:59:41 PM');
+	
+CREATE TABLE IF NOT EXISTS machines
+(
+    name text NOT NULL,
+    create_ts timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+insert into machines values('machine-1');
+insert into machines values('machine-2');
+insert into machines values('machine-3');	
+	
+SELECT create_hypertable('sensor', 'eventtime', chunk_time_interval => interval '1 day', if_not_exists => TRUE);	
