@@ -108,6 +108,37 @@ button {
   margin-bottom: 2px;
 }
 
+.mat-column-machine {
+  min-width: 125px;
+  padding-right: 10px;
+}
+
+.mat-column-machine a {
+  color: black;
+}
+
+.mat-column-machine .greenAnchor:hover {
+  color: #08C205;;
+}
+
+.mat-column-machine .yellowAnchor:hover {
+  /* color: cornflowerblue; */
+  color: #fecc27;;
+}
+
+.machine-icons {
+  float: right;
+  /* padding-right: 14px; */
+}
+
+.done-icon {
+  color: #08C205;
+}
+
+.wait-icon {
+  color: #fecc27;
+}
+
 .job-table-section {
   padding: 0px 10px;
 }

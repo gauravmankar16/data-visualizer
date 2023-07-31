@@ -257,7 +257,13 @@
         <!-- MACHINE Column -->
         <ng-container matColumnDef="machine">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Machine </th>
-          <td mat-cell *matCellDef="let element"> {{element.machine}} </td>
+          <td mat-cell *matCellDef="let element">
+            <a (click)="navigateTo('machineBoards', element)" [ngClass]="[element.actual_qty != 0 ? 'greenAnchor' : 'yellowAnchor']">{{element.machine}}</a>
+            <span class="machine-icons">
+              <mat-icon *ngIf="element.actual_qty != 0" matTooltip="Job completed" class="done-icon">done</mat-icon>
+              <mat-icon *ngIf="element.actual_qty == 0" matTooltip="Job in progress" class="wait-icon">timelapse</mat-icon>
+            </span>
+          </td>
         </ng-container>
         <!-- JOB NAME Column -->
         <ng-container matColumnDef="jobName">
@@ -302,13 +308,13 @@
         <!-- START TIME Column -->
         <ng-container matColumnDef="startTime">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Time </th>
-          <td mat-cell *matCellDef="let element"> {{element.start_time.toString() | date:'dd/MM/yyyy HH:mm':'UTC'}}
+          <td mat-cell *matCellDef="let element"> {{element.start_time.toString() | date:'dd/MM/yyyy HH:mm':'Asia/Kolkata'}}
           </td>
         </ng-container>
         <!-- START TIME Column -->
         <ng-container matColumnDef="endTime">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> End Time </th>
-          <td mat-cell *matCellDef="let element"> {{element.end_time | date:'dd/MM/yyyy HH:mm':'UTC'}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.end_time | date:'dd/MM/yyyy HH:mm':'Asia/Kolkata'}} </td>
         </ng-container>
         <!-- REMARKS Column -->
         <ng-container matColumnDef="remarks">

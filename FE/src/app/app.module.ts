@@ -13,6 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { DatePipe } from '@angular/common';
 
 import { CommonModule } from '@angular/common';
 import { AppComponent } from './app.component';
@@ -71,6 +72,7 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
   ],
   providers: [
     LoaderService,
+    DatePipe,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: InterceptorService,

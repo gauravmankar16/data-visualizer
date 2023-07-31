@@ -89,10 +89,11 @@ export class SupervisorBoardComponent implements OnInit {
     private formBuilder: FormBuilder,
     private _api: ApiService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private datePipe: DatePipe
   ) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {   
     this.getJobs();
     this.initForm();
   }
@@ -125,7 +126,7 @@ export class SupervisorBoardComponent implements OnInit {
         this.jobForm.get('end_time')?.enable();
       }
     }
-    if (this.jobForm?.get('start_time')?.value && new Date() >= startTimeValue) {
+    if (this.jobForm?.get('start_time')?.value && new Date() > startTimeValue) {
       this.jobForm.get('start_time')?.setErrors({ wrongStartTime: true });
     }
   }
@@ -301,8 +302,8 @@ export class SupervisorBoardComponent implements OnInit {
     // Convert the date string to a JavaScript Date object
     const dateTime = new Date(dateTimeString);
     // Format the date in "yyyy-MM-ddTHH:mm" format
-    const formattedDateTime = `${dateTime.toISOString().slice(0, 16)}`;
-    return formattedDateTime;
+    const formattedDateTime = this.datePipe.transform(dateTime, 'yyyy-MM-ddTHH:mm');
+    return formattedDateTime || '';
   }
 
   onFormSubmit() {
@@ -337,6 +338,8 @@ export class SupervisorBoardComponent implements OnInit {
                   this.snackBar.open(constants.messages.updateMessage, 'X', {
                     duration: 5000
                   });
+                  this.getJobs();
+                  this.onFormReset();
                 } else {
                   console.log("Error while updating jobs", response)
                   this.snackBar.open(constants.messages.errorMessage, 'X', {
@@ -360,6 +363,8 @@ export class SupervisorBoardComponent implements OnInit {
                   this.snackBar.open(constants.messages.saveMessage, '', {
                     duration: 5000
                   });
+                  this.getJobs();
+                  this.onFormReset();
                 }
 
                 if (response.statusCode == 500 && response.error.code == '23P01') {
@@ -373,13 +378,40 @@ export class SupervisorBoardComponent implements OnInit {
               }
             })
           }
-          this.getJobs();
-          this.onFormReset();
         } else {
           // User cancelled, do nothing or show a message
         }
       });
     }
+  }
+
+  navigateTo(type, rowElm) {
+    let url: string = "";
+    let epochStartTime: number = Math.floor(new Date(rowElm.start_time).getTime() / 1000);
+    let epochEndTime: number = Math.floor(new Date(rowElm.end_time).getTime() / 1000);
+    let currentEpochSeconds: number = Math.floor(Date.now() / 1000);
+    let toValue: any;
+    const epochPlusOneHour = currentEpochSeconds + 3600;
+
+    if (epochPlusOneHour <= epochEndTime) {
+      toValue = epochPlusOneHour;
+    } else {
+      toValue = epochEndTime;
+    }
+
+    switch (type) {
+      case 'machineBoards':
+        if (rowElm.actual_qty == 0) {
+          url = `http://localhost:4000/d/a5b3500f-697b-4441-b363-f901d6e69fec/machine-snapshot?orgId=1&var-machine=${rowElm.machine}&refresh=5s&from=${epochStartTime}&to=${toValue}`;
+        } else {
+          url = `http://localhost:4000/d/uzo1X8qVz/machine-snapshot-historical?from=${epochStartTime}&to=${epochEndTime}`;
+        }
+        break;
+
+      default:
+        break;
+    }
+    window.open(url, '_blank');
   }
 
   onFormReset() {
