@@ -145,7 +145,7 @@ export class SupervisorBoardComponent implements OnInit {
     }
 
     if (this.isEdit && !this.jobForm.controls['end_time'].disabled) {
-      let selectedRowEndTime = new Date(this.rowSelected.end_time).toISOString().slice(0, 16);
+      let selectedRowEndTime = new Date(this.rowSelected.end_time);
       if (new Date(this.jobForm.value.end_time) < new Date()) {
         this.jobForm.get('start_time')?.setErrors({ endTimeLessThanCurrent: true });
       }
@@ -248,6 +248,8 @@ export class SupervisorBoardComponent implements OnInit {
 
   selectRow(row) {
     console.log("Inside select row function ", row);
+    row.start_time = this.formatDateTimeLocal(row.start_time);
+    row.end_time = this.formatDateTimeLocal(row.end_time);
     this.rowSelected = row;
     this.isEdit = true;
     this.jobForm.patchValue({
@@ -257,8 +259,8 @@ export class SupervisorBoardComponent implements OnInit {
       operator_name: row.operator_name,
       target_qty: row.target_qty,
       actual_qty: row.actual_qty,
-      start_time: this.formatDateTimeLocal(row.start_time),
-      end_time: this.formatDateTimeLocal(row.end_time),
+      start_time: row.start_time,
+      end_time: row.end_time,
       remarks: row.remarks
     });
 
@@ -387,11 +389,11 @@ export class SupervisorBoardComponent implements OnInit {
 
   navigateTo(type, rowElm) {
     let url: string = "";
-    let epochStartTime: number = Math.floor(new Date(rowElm.start_time).getTime() / 1000);
-    let epochEndTime: number = Math.floor(new Date(rowElm.end_time).getTime() / 1000);
-    let currentEpochSeconds: number = Math.floor(Date.now() / 1000);
+    let epochStartTime: number = Math.floor(new Date(rowElm.start_time).getTime());
+    let epochEndTime: number = Math.floor(new Date(rowElm.end_time).getTime());
+    let currentEpochMilliSeconds: number = Math.floor(Date.now());
     let toValue: any;
-    const epochPlusOneHour = currentEpochSeconds + 3600;
+    const epochPlusOneHour = currentEpochMilliSeconds + 3600000;
 
     if (epochPlusOneHour <= epochEndTime) {
       toValue = epochPlusOneHour;
@@ -404,7 +406,7 @@ export class SupervisorBoardComponent implements OnInit {
         if (rowElm.actual_qty == 0) {
           url = `http://localhost:4000/d/a5b3500f-697b-4441-b363-f901d6e69fec/machine-snapshot?orgId=1&var-machine=${rowElm.machine}&refresh=5s&from=${epochStartTime}&to=${toValue}`;
         } else {
-          url = `http://localhost:4000/d/uzo1X8qVz/machine-snapshot-historical?from=${epochStartTime}&to=${epochEndTime}`;
+          url = `http://localhost:4000/d/uzo1X8qVz/machine-snapshot-historical?from=${epochStartTime}&to=${epochEndTime}&var-machine=${rowElm.machine}`;
         }
         break;
 
