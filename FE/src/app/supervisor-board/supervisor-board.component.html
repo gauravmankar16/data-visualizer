@@ -261,7 +261,8 @@
             <a (click)="navigateTo('machineBoards', element)" [ngClass]="[element.actual_qty != 0 ? 'greenAnchor' : 'yellowAnchor']">{{element.machine}}</a>
             <span class="machine-icons">
               <mat-icon *ngIf="element.actual_qty != 0" matTooltip="Job completed" class="done-icon">done</mat-icon>
-              <mat-icon *ngIf="element.actual_qty == 0" matTooltip="Job in progress" class="wait-icon">timelapse</mat-icon>
+              <mat-icon *ngIf="element.actual_qty == 0 && !hasEndTimePassed(element)" matTooltip="Job in progress" class="wait-icon">timelapse</mat-icon>
+              <mat-icon *ngIf="element.actual_qty == 0 && hasEndTimePassed(element)" matTooltip="Job end time passed. Please set actual quantity" class="notif-icon">notification_important</mat-icon>
             </span>
           </td>
         </ng-container>

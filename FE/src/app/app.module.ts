@@ -14,6 +14,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { DatePipe } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { CommonModule } from '@angular/common';
 import { AppComponent } from './app.component';
@@ -68,7 +69,8 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     MatSortModule,
     MatDialogModule,
     MatDividerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatTooltipModule
   ],
   providers: [
     LoaderService,

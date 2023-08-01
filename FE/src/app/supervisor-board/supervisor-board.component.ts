@@ -108,7 +108,7 @@ export class SupervisorBoardComponent implements OnInit {
       actual_qty: [{ value: 0, disabled: true }, Validators.required],
       start_time: ['', Validators.required],
       end_time: ['', Validators.required],
-      remarks: ['']
+      remarks: [{ value: '', disabled: true }]
     });
   }
 
@@ -172,6 +172,18 @@ export class SupervisorBoardComponent implements OnInit {
         });
       }
     }
+  }
+
+  hasEndTimePassed(row) {
+    // Convert UTC time to IST using the timeZone option
+    const endISTTime = new Date(row.end_time).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+
+    // Get the current time in IST using the timeZone option
+    const currentISTTime = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+    if (new Date(currentISTTime).getTime() > new Date(endISTTime).getTime()) {
+      return true;
+    }
+    return false;
   }
 
 
@@ -404,9 +416,9 @@ export class SupervisorBoardComponent implements OnInit {
     switch (type) {
       case 'machineBoards':
         if (rowElm.actual_qty == 0) {
-          url = `http://localhost:4000/d/a5b3500f-697b-4441-b363-f901d6e69fec/machine-snapshot?orgId=1&var-machine=${rowElm.machine}&refresh=5s&from=${epochStartTime}&to=${toValue}`;
+          url = `http://localhost:4000/d/a5b3500f-697b-4441-b363-f901d6e69fec/machine-snapshot?orgId=1&var-machine=${rowElm.machine}&refresh=5s&from=${epochStartTime}&to=${toValue}&var-job=${rowElm.job_name}`;
         } else {
-          url = `http://localhost:4000/d/uzo1X8qVz/machine-snapshot-historical?from=${epochStartTime}&to=${epochEndTime}&var-machine=${rowElm.machine}`;
+          url = `http://localhost:4000/d/uzo1X8qVz/machine-snapshot-historical?from=${epochStartTime}&to=${epochEndTime}&var-machine=${rowElm.machine}&var-job=${rowElm.job_name}`;
         }
         break;
 
