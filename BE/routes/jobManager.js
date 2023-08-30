@@ -114,4 +114,18 @@ router.get("/get", auth.verifyToken, async (req, res, next) => {
     res.send({ status: 0, error: error });
   }
 });
+
+router.get("/getMachineList", auth.verifyToken, async (req, res, next) => {
+  try {
+    const dataQuery = `SELECT * FROM machines`;
+    const dataResult = await pool.query(dataQuery);
+
+    res.json({
+      data: dataResult.rows,
+      statusCode: 200,
+    });
+  } catch (error) {
+    res.send({ status: 0, error: error });
+  }
+});
 module.exports = router;

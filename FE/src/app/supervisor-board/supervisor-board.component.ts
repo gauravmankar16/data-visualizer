@@ -64,25 +64,7 @@ export class SupervisorBoardComponent implements OnInit {
 
   displayedColumns: string[] = ['machine', 'jobName', 'operatorName', 'targetQty', 'actualQty', 'startTime', 'endTime', 'remarks'];
 
-  machines = [{
-    id: 1,
-    name: 'machine-1'
-  }, {
-    id: 2,
-    name: 'machine-2'
-  },
-  {
-    id: 3,
-    name: 'machine-3'
-  },
-  {
-    id: 4,
-    name: 'machine-4'
-  },
-  {
-    id: 5,
-    name: 'machine-5'
-  }];
+  machines: any = [];
 
   constructor(
     private jobService: JobService,
@@ -95,7 +77,20 @@ export class SupervisorBoardComponent implements OnInit {
 
   ngOnInit(): void {   
     this.getJobs();
+    this.getMachineList();
     this.initForm();
+  }
+
+  async getMachineList() {
+    try {
+      let response: any = await this.jobService.getMachineList();
+
+      if (response.statusCode == constants.statusCode.success) {
+        this.machines = response.data;
+      }
+    } catch (error) {
+      console.log("Error occurred in get jobs ", error)
+    }
   }
 
   initForm() {

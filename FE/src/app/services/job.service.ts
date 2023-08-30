@@ -30,4 +30,22 @@ export class JobService {
       throw error;
     }
   }
+
+  getMachineList() {
+    try {
+      return new Promise((resolve, reject) => {
+        this.api.getTypeRequest('manageJobs/getMachineList').subscribe({
+          next: (response: any) => {
+            resolve(response);
+          },
+          error: (error: any) => {
+            console.log("Error occurred in get machine list ", error)
+            reject(error);
+          }
+        });
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
