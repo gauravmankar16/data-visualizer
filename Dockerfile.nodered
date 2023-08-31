@@ -1,0 +1,8 @@
+FROM nodered/node-red
+COPY flows.json .
+#RUN npm install node-red-contrib-flightaware
+#RUN npm i node-red-contrib-postgresql
+RUN npm install node-red-contrib-postgresql
+RUN npm install node-red-contrib-s7comm
+RUN npm install node-red-contrib-s7
+RUN npm install node-red-dashboard

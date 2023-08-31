@@ -1,0 +1,14 @@
+# Use the official TimescaleDB image based on PostgreSQL
+FROM timescale/timescaledb:latest-pg12
+
+# (Optional) Set environment variables for TimescaleDB configuration
+ENV PGDATA /var/lib/postgresql/data/pgdata
+ENV POSTGRES_USER postgres
+ENV POSTGRES_PASSWORD password
+ENV POSTGRES_DB postgres
+
+# Copy the initialization script into the container
+COPY init_timescaledb.sql /docker-entrypoint-initdb.d/
+
+# Expose the PostgreSQL port
+EXPOSE 5432

@@ -217,6 +217,7 @@
         <mat-error
           *ngIf="jobForm.get('start_time')?.invalid && jobForm.get('start_time')?.touched && jobForm.get('start_time')?.hasError('required')">{{startTimeRequired}}</mat-error>
         <mat-error *ngIf="startTimePassedFlag">{{startTimePassed}}</mat-error>
+        <mat-error *ngIf="jobForm.hasError('wrongStartTime', ['start_time'])">{{wrongStartTime}}</mat-error>
       </mat-form-field>
 
       <mat-form-field class="time-input" appearance="outline">
@@ -226,6 +227,7 @@
         <mat-error
           *ngIf="jobForm.get('end_time')?.invalid && jobForm.get('end_time')?.touched && jobForm.get('end_time')?.hasError('required')">{{endTimeRequired}}</mat-error>
         <mat-error *ngIf="jobForm.hasError('endTimeBeforeStartTime', ['end_time'])">{{endTimeError}}</mat-error>
+        <mat-error *ngIf="jobForm.hasError('endTimeLessThanCurrent', ['end_time'])">{{endTimeLessThanCurrent}}</mat-error>
         <mat-error *ngIf="endTimePassedFlag">{{endTimePassed}}</mat-error>
       </mat-form-field>
 
@@ -255,7 +257,14 @@
         <!-- MACHINE Column -->
         <ng-container matColumnDef="machine">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Machine </th>
-          <td mat-cell *matCellDef="let element"> {{element.machine}} </td>
+          <td mat-cell *matCellDef="let element">
+            <a (click)="navigateTo('machineBoards', element)" [ngClass]="[element.actual_qty != 0 ? 'greenAnchor' : 'yellowAnchor']">{{element.machine}}</a>
+            <span class="machine-icons">
+              <mat-icon *ngIf="element.actual_qty != 0" matTooltip="Job completed" class="done-icon">done</mat-icon>
+              <mat-icon *ngIf="element.actual_qty == 0 && !hasEndTimePassed(element)" matTooltip="Job in progress" class="wait-icon">timelapse</mat-icon>
+              <mat-icon *ngIf="element.actual_qty == 0 && hasEndTimePassed(element)" matTooltip="Job end time passed. Please set actual quantity" class="notif-icon">notification_important</mat-icon>
+            </span>
+          </td>
         </ng-container>
         <!-- JOB NAME Column -->
         <ng-container matColumnDef="jobName">
@@ -300,13 +309,13 @@
         <!-- START TIME Column -->
         <ng-container matColumnDef="startTime">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Time </th>
-          <td mat-cell *matCellDef="let element"> {{element.start_time.toString() | date:'dd/MM/yyyy HH:mm':'UTC'}}
+          <td mat-cell *matCellDef="let element"> {{element.start_time.toString() | date:'dd/MM/yyyy HH:mm':'Asia/Kolkata'}}
           </td>
         </ng-container>
         <!-- START TIME Column -->
         <ng-container matColumnDef="endTime">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> End Time </th>
-          <td mat-cell *matCellDef="let element"> {{element.end_time | date:'dd/MM/yyyy HH:mm':'UTC'}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.end_time | date:'dd/MM/yyyy HH:mm':'Asia/Kolkata'}} </td>
         </ng-container>
         <!-- REMARKS Column -->
         <ng-container matColumnDef="remarks">
@@ -324,7 +333,7 @@
       </table>
       <mat-paginator showFirstLastButtons
       [length]="totalCount" [pageSize]="pageSize"
-      [pageSizeOptions]="[2, 5, 10, 25, 50]" (page)="onPageChange($event)">
+      [pageSizeOptions]="[5, 10, 25, 50]" (page)="onPageChange($event)">
     </mat-paginator>
     </div>
   </section>

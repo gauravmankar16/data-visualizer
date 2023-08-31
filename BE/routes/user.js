@@ -20,7 +20,7 @@ const pool = new Pool({
 //   host: "localhost",
 //   database: "postgres",
 //   password: "password",
-//   port: 5436,
+//   port: 5432,
 // });
 
 router.post("/register", async function (req, res, next) {

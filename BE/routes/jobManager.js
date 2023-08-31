@@ -19,7 +19,7 @@ const pool = new Pool({
 //   host: "localhost",
 //   database: "postgres",
 //   password: "password",
-//   port: 5436,
+//   port: 5432,
 // });
 
 router.post("/save", auth.verifyToken, async function (req, res, next) {
@@ -30,7 +30,7 @@ router.post("/save", auth.verifyToken, async function (req, res, next) {
     // elm.end_time = new Date(elm.end_time).toISOString();
     let query = `INSERT INTO job_details (machine, job_name, operator_name, shift, target_qty, actual_qty, remarks, updated_by, start_time, end_time)
     VALUES('${elm.machine}', '${elm.job_name}', '${elm.operator_name}', '[${elm.start_time},${elm.end_time})', ${elm.target_qty}, ${elm.actual_qty}, '${elm.remarks}', '${elm.updated_by}', '${elm.start_time}', '${elm.end_time}')`;
-    let res = await pool.query(query);
+    let response = await pool.query(query);
 
     // let jobs = req.body.jobs;
     // for (let i = 0; i < jobs.length; i++) {
@@ -93,8 +93,8 @@ router.get("/get", auth.verifyToken, async (req, res, next) => {
     // }
     // res.send({ status: 1, data: resData });
 
-    const dataQuery = `SELECT * FROM job_details ORDER BY id OFFSET $1 LIMIT $2`;
-    const dataResult = await pool.query(dataQuery, [offset, pageSize]);
+    const dataQuery = `SELECT * FROM job_details ORDER BY id DESC LIMIT $1 OFFSET $2`;
+    const dataResult = await pool.query(dataQuery, [pageSize, offset]);
 
     const totalCountQuery = `SELECT COUNT(*) FROM job_details`;
     const totalCountResult = await pool.query(totalCountQuery);
@@ -108,6 +108,20 @@ router.get("/get", auth.verifyToken, async (req, res, next) => {
       pageSize,
       totalCount,
       totalPages,
+      statusCode: 200,
+    });
+  } catch (error) {
+    res.send({ status: 0, error: error });
+  }
+});
+
+router.get("/getMachineList", auth.verifyToken, async (req, res, next) => {
+  try {
+    const dataQuery = `SELECT * FROM machines`;
+    const dataResult = await pool.query(dataQuery);
+
+    res.json({
+      data: dataResult.rows,
       statusCode: 200,
     });
   } catch (error) {

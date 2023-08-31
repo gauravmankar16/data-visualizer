@@ -40,13 +40,14 @@ export class SupervisorBoardComponent implements OnInit {
   remarksAfterTargetAdjust = constants.messages.remarksAfterTargetAdjust;
   setEndTime = constants.messages.setEndTime;
   endTimeCannotBeIncreased = constants.messages.endTimeCannotBeIncreased;
-  remarksMessage = constants.messages.remarks;
+  wrongStartTime = constants.messages.wrongStartTime;
+  endTimeLessThanCurrent = constants.messages.endTimeLessThanCurrent;
   endTimePassedFlag: boolean = false;
   startTimePassedFlag: boolean = false;
   targetQtyLessThanOneFlag: boolean = false;
 
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 50;
   totalCount: number;
   rowSelected: any;
   endTime: any;
@@ -63,37 +64,33 @@ export class SupervisorBoardComponent implements OnInit {
 
   displayedColumns: string[] = ['machine', 'jobName', 'operatorName', 'targetQty', 'actualQty', 'startTime', 'endTime', 'remarks'];
 
-  machines = [{
-    id: 1,
-    name: 'machine-1'
-  }, {
-    id: 2,
-    name: 'machine-2'
-  },
-  {
-    id: 3,
-    name: 'machine-3'
-  },
-  {
-    id: 4,
-    name: 'machine-4'
-  },
-  {
-    id: 5,
-    name: 'machine-5'
-  }];
+  machines: any = [];
 
   constructor(
     private jobService: JobService,
     private formBuilder: FormBuilder,
     private _api: ApiService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private datePipe: DatePipe
   ) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {   
     this.getJobs();
+    this.getMachineList();
     this.initForm();
+  }
+
+  async getMachineList() {
+    try {
+      let response: any = await this.jobService.getMachineList();
+
+      if (response.statusCode == constants.statusCode.success) {
+        this.machines = response.data;
+      }
+    } catch (error) {
+      console.log("Error occurred in get jobs ", error)
+    }
   }
 
   initForm() {
@@ -103,10 +100,10 @@ export class SupervisorBoardComponent implements OnInit {
       job_name: ['', Validators.required],
       operator_name: ['', [Validators.required]],
       target_qty: [0, Validators.required],
-      actual_qty: [0, Validators.required],
+      actual_qty: [{ value: 0, disabled: true }, Validators.required],
       start_time: ['', Validators.required],
       end_time: ['', Validators.required],
-      remarks: [this.remarksMessage]
+      remarks: [{ value: '', disabled: true }]
     });
   }
 
@@ -114,13 +111,18 @@ export class SupervisorBoardComponent implements OnInit {
     const startTimeValue = new Date(this.jobForm?.get('start_time')?.value);
     const endTimeValue = new Date(this.jobForm?.get('end_time')?.value);
 
-    if (startTimeValue && endTimeValue && endTimeValue < startTimeValue) {
-      this.jobForm.get('end_time')?.setErrors({ endTimeBeforeStartTime: true });
-    } else {
-      this.jobForm.get('end_time')?.setErrors(null);
-      this.endTimePassedFlag = false;
-      this.jobForm.get('start_time')?.enable();
-      this.jobForm.get('end_time')?.enable();
+    if (this.jobForm?.get('end_time')?.value && this.jobForm?.get('start_time')?.value) {
+      if (startTimeValue && endTimeValue && endTimeValue < startTimeValue) {
+        this.jobForm.get('end_time')?.setErrors({ endTimeBeforeStartTime: true });
+      } else {
+        this.jobForm.get('end_time')?.setErrors(null);
+        this.endTimePassedFlag = false;
+        this.jobForm.get('start_time')?.enable();
+        this.jobForm.get('end_time')?.enable();
+      }
+    }
+    if (this.jobForm?.get('start_time')?.value && new Date() > startTimeValue) {
+      this.jobForm.get('start_time')?.setErrors({ wrongStartTime: true });
     }
   }
 
@@ -138,12 +140,15 @@ export class SupervisorBoardComponent implements OnInit {
     }
 
     if (this.isEdit && !this.jobForm.controls['end_time'].disabled) {
-      let selectedRowEndTime = new Date(this.rowSelected.end_time).toISOString().slice(0, 16)
+      let selectedRowEndTime = new Date(this.rowSelected.end_time);
+      if (new Date(this.jobForm.value.end_time) < new Date()) {
+        this.jobForm.get('start_time')?.setErrors({ endTimeLessThanCurrent: true });
+      }
       if (new Date(this.jobForm.value.end_time) < new Date(selectedRowEndTime)) {
         // Show the confirmation dialog before saving
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
           width: '400px',
-          data: { title: 'Confirm', message: 'Target quantity would be auto adjusted, are you sure you want to proceed?' }
+          data: { title: 'Confirm', message: 'Target quantity will be auto adjusted, are you sure you want to proceed?' }
         });
 
         // Handle the dialog result when the user closes the dialog
@@ -162,6 +167,18 @@ export class SupervisorBoardComponent implements OnInit {
         });
       }
     }
+  }
+
+  hasEndTimePassed(row) {
+    // Convert UTC time to IST using the timeZone option
+    const endISTTime = new Date(row.end_time).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+
+    // Get the current time in IST using the timeZone option
+    const currentISTTime = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+    if (new Date(currentISTTime).getTime() > new Date(endISTTime).getTime()) {
+      return true;
+    }
+    return false;
   }
 
 
@@ -238,6 +255,8 @@ export class SupervisorBoardComponent implements OnInit {
 
   selectRow(row) {
     console.log("Inside select row function ", row);
+    row.start_time = this.formatDateTimeLocal(row.start_time);
+    row.end_time = this.formatDateTimeLocal(row.end_time);
     this.rowSelected = row;
     this.isEdit = true;
     this.jobForm.patchValue({
@@ -247,8 +266,8 @@ export class SupervisorBoardComponent implements OnInit {
       operator_name: row.operator_name,
       target_qty: row.target_qty,
       actual_qty: row.actual_qty,
-      start_time: this.formatDateTimeLocal(row.start_time),
-      end_time: this.formatDateTimeLocal(row.end_time),
+      start_time: row.start_time,
+      end_time: row.end_time,
       remarks: row.remarks
     });
 
@@ -267,6 +286,9 @@ export class SupervisorBoardComponent implements OnInit {
       this.endTimePassedFlag = true;
       this.jobForm.get('start_time')?.disable();
       this.jobForm.get('end_time')?.disable();
+
+      // Enable actual quantity only if end_time has elasped
+      this.jobForm.get('actual_qty')?.enable();
     } else {
       this.jobForm.get('end_time')?.setErrors(null);
       this.endTimePassedFlag = false;
@@ -289,8 +311,8 @@ export class SupervisorBoardComponent implements OnInit {
     // Convert the date string to a JavaScript Date object
     const dateTime = new Date(dateTimeString);
     // Format the date in "yyyy-MM-ddTHH:mm" format
-    const formattedDateTime = `${dateTime.toISOString().slice(0, 16)}`;
-    return formattedDateTime;
+    const formattedDateTime = this.datePipe.transform(dateTime, 'yyyy-MM-ddTHH:mm');
+    return formattedDateTime || '';
   }
 
   onFormSubmit() {
@@ -298,11 +320,11 @@ export class SupervisorBoardComponent implements OnInit {
       // Show the confirmation dialog before saving
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         width: '400px',
-        data: { title: 'Confirm', message: 'Machine selection, Job Name and Target Quantity are not editable, are you sure you want to save?' },
+        data: { title: 'Confirm', message: this.isEdit ? 'Are you sure you want to update?' : 'Machine selection, Job Name and Target Quantity are not editable, are you sure you want to save?' },
       });
 
       // Handle the dialog result when the user closes the dialog
-      dialogRef.afterClosed().subscribe(async (result) => {
+      dialogRef.afterClosed().subscribe((result) => {
         if (result) {
           // User confirmed, proceed with saving
           let formData: any = {}
@@ -311,10 +333,10 @@ export class SupervisorBoardComponent implements OnInit {
           formData['updated_by'] = JSON.parse(localStorage.getItem('userData') || '{}')?.rows[0]?.username;
           if (this.isEdit) {
             if (formData.operator_name != this.rowSelected.operator_name) {
-              formData['remarks'] = `System generated: ${this.rowSelected.operator_name} updated to ${formData.operator_name} on ${new Date().toLocaleString()}`;
+              formData['remarks'] = formData.remarks + `\nSystem generated: Operator ${this.rowSelected.operator_name} updated to ${formData.operator_name} on ${new Date().toLocaleString()}`;
             }
             formData['target_qty'] = this.newTargetQtyAfterAdjusting ? this.newTargetQtyAfterAdjusting : formData['target_qty'];
-            formData['remarks'] = this.newTargetQtyAfterAdjusting ? 'System generated: Target quantity auto adjusted' : formData['remarks']
+            formData['remarks'] = this.newTargetQtyAfterAdjusting ? formData.remarks + '\nSystem generated: Target quantity auto adjusted' : formData['remarks']
             this.newTargetQtyAfterAdjusting = 0;
             console.log(formData, 'formDataformData');
             // Call the service method to send the updated data back to the server
@@ -325,6 +347,8 @@ export class SupervisorBoardComponent implements OnInit {
                   this.snackBar.open(constants.messages.updateMessage, 'X', {
                     duration: 5000
                   });
+                  this.getJobs();
+                  this.onFormReset();
                 } else {
                   console.log("Error while updating jobs", response)
                   this.snackBar.open(constants.messages.errorMessage, 'X', {
@@ -348,6 +372,8 @@ export class SupervisorBoardComponent implements OnInit {
                   this.snackBar.open(constants.messages.saveMessage, '', {
                     duration: 5000
                   });
+                  this.getJobs();
+                  this.onFormReset();
                 }
 
                 if (response.statusCode == 500 && response.error.code == '23P01') {
@@ -361,13 +387,40 @@ export class SupervisorBoardComponent implements OnInit {
               }
             })
           }
-          this.onFormReset();
-          await this.getJobs();
         } else {
           // User cancelled, do nothing or show a message
         }
       });
     }
+  }
+
+  navigateTo(type, rowElm) {
+    let url: string = "";
+    let epochStartTime: number = Math.floor(new Date(rowElm.start_time).getTime());
+    let epochEndTime: number = Math.floor(new Date(rowElm.end_time).getTime());
+    let currentEpochMilliSeconds: number = Math.floor(Date.now());
+    let toValue: any;
+    const epochPlusOneHour = currentEpochMilliSeconds + 3600000;
+
+    if (epochPlusOneHour <= epochEndTime) {
+      toValue = epochPlusOneHour;
+    } else {
+      toValue = epochEndTime;
+    }
+
+    switch (type) {
+      case 'machineBoards':
+        if (rowElm.actual_qty == 0) {
+          url = `http://nikolai-1:4000/d/a5b3500f-697b-4441-b363-f901d6e69fec/machine-snapshot?orgId=1&var-machine=${rowElm.machine}&refresh=5s&from=${epochStartTime}&to=${toValue}&var-job=${rowElm.job_name}`;
+        } else {
+          url = `http://nikolai-1:4000/d/uzo1X8qVz/machine-snapshot-historical?from=${epochStartTime}&to=${epochEndTime}&var-machine=${rowElm.machine}&var-job=${rowElm.job_name}`;
+        }
+        break;
+
+      default:
+        break;
+    }
+    window.open(url, '_blank');
   }
 
   onFormReset() {
@@ -384,10 +437,10 @@ export class SupervisorBoardComponent implements OnInit {
     this.initForm();
   }
 
-  async onPageChange(event: PageEvent) {
+  onPageChange(event: PageEvent) {
     this.currentPage = event.pageIndex + 1;;
     this.pageSize = event.pageSize;
-    await this.getJobs();
+    this.getJobs();
   }
 
   createFilter(): (data: any, filter: string) => boolean {
