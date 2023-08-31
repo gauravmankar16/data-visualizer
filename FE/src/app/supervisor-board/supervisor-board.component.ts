@@ -411,9 +411,9 @@ export class SupervisorBoardComponent implements OnInit {
     switch (type) {
       case 'machineBoards':
         if (rowElm.actual_qty == 0) {
-          url = `http://localhost:4000/d/a5b3500f-697b-4441-b363-f901d6e69fec/machine-snapshot?orgId=1&var-machine=${rowElm.machine}&refresh=5s&from=${epochStartTime}&to=${toValue}&var-job=${rowElm.job_name}`;
+          url = `http://nikolai-1:4000/d/a5b3500f-697b-4441-b363-f901d6e69fec/machine-snapshot?orgId=1&var-machine=${rowElm.machine}&refresh=5s&from=${epochStartTime}&to=${toValue}&var-job=${rowElm.job_name}`;
         } else {
-          url = `http://localhost:4000/d/uzo1X8qVz/machine-snapshot-historical?from=${epochStartTime}&to=${epochEndTime}&var-machine=${rowElm.machine}&var-job=${rowElm.job_name}`;
+          url = `http://nikolai-1:4000/d/uzo1X8qVz/machine-snapshot-historical?from=${epochStartTime}&to=${epochEndTime}&var-machine=${rowElm.machine}&var-job=${rowElm.job_name}`;
         }
         break;
 
