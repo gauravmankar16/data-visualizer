@@ -73,12 +73,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "DataMetrics:build:production",
-              "host": "0.0.0.0"
+              "browserTarget": "DataMetrics:build:production"
             },
             "development": {
-              "browserTarget": "DataMetrics:build:development",
-              "host": "0.0.0.0"
+              "browserTarget": "DataMetrics:build:development"
             }
           },
           "defaultConfiguration": "development"
