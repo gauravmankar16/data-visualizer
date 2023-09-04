@@ -46,8 +46,18 @@ CREATE TABLE IF NOT EXISTS machines
     create_ts timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-insert into machines values('machine-1');
-insert into machines values('machine-2');
-insert into machines values('machine-3');	
-	
+INSERT INTO public.machines 
+("name" , create_ts)
+VALUES('WELDING-B1', CURRENT_TIMESTAMP),
+('WELDING-B2', CURRENT_TIMESTAMP),
+('WELDING-B3', CURRENT_TIMESTAMP),
+('WELDING-B4', CURRENT_TIMESTAMP),
+('WELDING-B15', CURRENT_TIMESTAMP),
+('WELDING-B22', CURRENT_TIMESTAMP),
+('WELDING-B25', CURRENT_TIMESTAMP),
+('WELDING-B26', CURRENT_TIMESTAMP),
+('WELDING-B30', CURRENT_TIMESTAMP),
+('WELDING-B31', CURRENT_TIMESTAMP);
+
+
 SELECT create_hypertable('sensor', 'eventtime', chunk_time_interval => interval '1 day', if_not_exists => TRUE);	
